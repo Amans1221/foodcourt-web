@@ -1,0 +1,410 @@
+/* header.css - Updated with Red Background and Gold Hover */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #d50000; /* Red background */
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+.header.scrolled {
+  background: #b71c1c; /* Darker red when scrolled */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+
+/* Nav Left */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFD700; /* Gold on hover */
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+/* Nav Center */
+.nav-center {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #FFD700; /* Gold color on hover */
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #FFD700; /* Gold underline */
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Disabled Order Online Link */
+.nav-link.disabled {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  opacity: 0.7;
+  position: relative;
+}
+
+.nav-link.disabled:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-link.disabled::after {
+  display: none;
+}
+
+.nav-link.disabled:hover::after {
+  display: none;
+}
+
+/* Order hint text */
+.order-hint {
+  font-size: 0.7rem;
+  color: #FFD700;
+  margin-left: 4px;
+  font-style: italic;
+  display: inline-block;
+  opacity: 0.9;
+}
+
+/* Nav Right */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+}
+
+.cart-btn {
+  background: white;
+  color: #d50000;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cart-btn:hover {
+  background: #FFD700; /* Gold on hover */
+  color: #d50000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.3);
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #FFD700; /* Gold badge */
+  color: #d50000;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #d50000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Empty Cart Indicator */
+.empty-cart-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.5s ease;
+}
+
+.empty-cart-indicator i {
+  color: #FFD700; /* Gold info icon */
+  font-size: 0.9rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  .nav-center {
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: calc(100vh - 70px);
+    background: #d50000; /* Red background for mobile menu */
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    overflow-y: auto;
+  }
+  
+  .nav-center.active {
+    left: 0;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1rem;
+  }
+  
+  .nav-link:last-child {
+    border-bottom: none;
+  }
+  
+  .nav-link:hover {
+    background: rgba(255, 215, 0, 0.1); /* Light gold background on hover */
+    padding-left: 10px;
+    border-radius: 5px;
+  }
+  
+  .mobile-overlay {
+    display: block;
+  }
+  
+  .logo-title {
+    font-size: 1rem;
+  }
+  
+  .tagline {
+    font-size: 0.6rem;
+  }
+  
+  .empty-cart-indicator {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    z-index: 1002;
+    background: #b71c1c;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+  }
+  
+  .order-hint {
+    display: block;
+    margin-left: 0;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    color: #FFD700;
+  }
+  
+  .cart-btn {
+    background: white;
+    color: #d50000;
+  }
+  
+  .cart-btn:hover {
+    background: #FFD700;
+    color: #d50000;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 15px;
+  }
+  
+  .logo-title {
+    font-size: 0.9rem;
+  }
+  
+  .tagline {
+    display: none;
+  }
+  
+  .empty-cart-indicator {
+    display: none; /* Hide on very small screens to save space */
+  }
+  
+  .cart-count {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    top: -3px;
+    right: -3px;
+  }
+}
+
+/* Active Link Styling (Optional - if you want to highlight current page) */
+.nav-link.active {
+  color: #FFD700;
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  width: 100%;
+  background: #FFD700;
+}
+
+/* Add some gold accents throughout */
+.header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    #FFD700 0%, 
+    #FFC400 25%, 
+    #FFD700 50%, 
+    #FFC400 75%, 
+    #FFD700 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Scrolled state adjustments */
+.header.scrolled::before {
+  height: 2px;
+  background: #FFD700;
+  animation: none;
+}

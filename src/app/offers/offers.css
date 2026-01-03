@@ -1,0 +1,126 @@
+/* --- Section Container --- */
+.offers-section {
+  background: linear-gradient(135deg, #fffaf0, #fff3e0);
+  padding: 80px 20px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+   background: 
+    linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
+    url('/assets/logo.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* --- Section Titles --- */
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 3rem;
+}
+
+/* --- Offers Grid --- */
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+/* --- Offer Card --- */
+.offer-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 280px;
+}
+
+.offer-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(255, 152, 0, 0.25);
+}
+
+/* --- Image Wrapper --- */
+.offer-img-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.offer-card:hover .offer-img {
+  transform: scale(1.1);
+}
+
+/* --- Overlay Effect --- */
+.offer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 152, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.offer-card:hover .offer-overlay {
+  opacity: 1;
+}
+
+/* --- View Button --- */
+.view-btn {
+  background: #fff;
+  color: #ff9800;
+  border: none;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 10px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+  background: #ff9800;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* --- Title --- */
+.offer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 1rem 0;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.7rem;
+  }
+  .offer-img {
+    height: 180px;
+  }
+}

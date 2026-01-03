@@ -1,0 +1,195 @@
+<div class="contact-container ">
+  <!-- Hero Section -->
+  <section class="contact-hero">
+    <div class="hero-content">
+      <h1>Contact Us</h1>
+      <p>We'd love to hear from you! Get in touch with any questions, feedback, or reservation inquiries.</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="contact-main">
+    <!-- Contact Form -->
+    <section class="contact-form-section">
+      <h2>Send us a Message</h2>
+      <form (ngSubmit)="onSubmit()" #contactForm="ngForm" class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              [(ngModel)]="contactForm.name" 
+              required
+              placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              [(ngModel)]="contactForm.email" 
+              required
+              placeholder="your.email@example.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone" 
+              [(ngModel)]="contactForm.phone"
+              placeholder="(555) 123-4567">
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <select 
+              id="subject" 
+              name="subject" 
+              [(ngModel)]="contactForm.subject" 
+              required>
+              <option value="">Select a subject</option>
+              <option value="reservation">Reservation Inquiry</option>
+              <option value="catering">Catering Services</option>
+              <option value="feedback">Feedback</option>
+              <option value="complaint">Complaint</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea 
+            id="message" 
+            name="message" 
+            [(ngModel)]="contactForm.message" 
+            required
+            rows="6"
+            placeholder="Please type your message here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Preferred Contact Method</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input 
+                type="radio" 
+                name="preferredContact" 
+                value="email" 
+                [(ngModel)]="contactForm.preferredContact">
+              Email
+            </label>
+            <label class="radio-option">
+              <input 
+                type="radio" 
+                name="preferredContact" 
+                value="phone" 
+                [(ngModel)]="contactForm.preferredContact">
+              Phone
+            </label>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary submit-btn"
+          [disabled]="!contactForm.form.valid">
+          Send Message
+        </button>
+      </form>
+    </section>
+
+    <!-- Contact Info & FAQ -->
+    <div class="sidebar">
+      <!-- Contact Information -->
+      <section class="contact-info-card">
+        <h3>Get in Touch</h3>
+        <div class="contact-details">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div class="contact-text">
+              <strong>Address</strong>
+              <p>{{ contactInfo.address }}</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div class="contact-text">
+              <strong>Phone</strong>
+              <p>{{ contactInfo.phone }}</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div class="contact-text">
+              <strong>Email</strong>
+              <p>{{ contactInfo.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hours-section">
+          <h4>Opening Hours</h4>
+          <div class="hours-item">
+            <span>Monday - Friday</span>
+            <span>{{ contactInfo.hours.weekdays }}</span>
+          </div>
+          <div class="hours-item">
+            <span>Saturday - Sunday</span>
+            <span>{{ contactInfo.hours.weekends }}</span>
+          </div>
+        </div>
+
+        <a routerLink="/about" class="btn btn-secondary">Learn More About Us</a>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-list">
+          <div 
+            class="faq-item" 
+            *ngFor="let faq of faqs; let i = index"
+            [class.expanded]="expandedFaqIndex === i">
+            <div class="faq-question" (click)="toggleFaq(i)">
+              <span>{{ faq.question }}</span>
+              <span class="faq-toggle">{{ expandedFaqIndex === i ? '−' : '+' }}</span>
+            </div>
+            <div class="faq-answer" *ngIf="expandedFaqIndex === i">
+              <p>{{ faq.answer }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <section class="map-section">
+    <h2>Find Us</h2>
+    <div class="map-container">
+      <div class="map-placeholder">
+        <img 
+          src="/assets/Screenshot 2025-11-05 093445.jpg" 
+          alt="Restaurant Location Map"
+          class="map-image">
+        <div class="map-overlay">
+          <h4>Visit MAYA'S MATEUL Restaurant</h4>
+          <p>{{ contactInfo.address }}</p>
+          <a 
+            href="https://maps.google.com/?q=Ground Floor, PVR Complex, community centre, Shop no , G-1, plot no 10, Block G, Vikaspuri, New Delhi, Delhi 110018" 
+            target="_blank" 
+            class="btn btn-primary">
+            Get Directions
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

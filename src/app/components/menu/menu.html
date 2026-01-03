@@ -1,0 +1,203 @@
+<!-- menu.html -->
+<div class="menu-container">
+
+  <!-- Category buttons -->
+  <div class="category-bar">
+    <button
+      *ngFor="let category of categories"
+      (click)="setActiveCategory(category)"
+      [class.active]="activeCategory === category">
+      {{ category }}
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div class="menu-content-wrapper">
+    
+    <!-- Left column: Image and related dishes -->
+    <div class="menu-left-column">
+      <!-- Main image -->
+      <div class="menu-image">
+        <img [src]="getSafeImage(selectedItem)" [alt]="selectedItem.name">
+      </div>
+
+      <!-- Related dishes section with navigation arrows -->
+      <div class="related-section" *ngIf="filteredItems.length > 1">
+        <div class="related-section-header">
+          <h4>Other {{ activeCategory }} Dishes</h4>
+          <div class="related-nav">
+            <button (click)="scrollRelatedLeft()" [disabled]="relatedScrollPosition <= 0">❮</button>
+            <button (click)="scrollRelatedRight()" [disabled]="isRelatedScrollAtEnd()">❯</button>
+          </div>
+        </div>
+        
+        <div class="related-row" #relatedRow>
+          <div
+            class="related-card"
+            *ngFor="let item of filteredItems; let i = index"
+            (click)="selectItemByIndex(i)"
+            [class.active]="i === selectedItemIndex">
+            <img [src]="getSafeImage(item)" [alt]="item.name">
+            <p class="related-card-name">{{ item.name }}</p>
+            <small class="related-card-price">
+              <span *ngIf="item.price">₹{{ item.price }}</span>
+              <span *ngIf="!item.price">
+                ₹{{ item.halfPrice }} / ₹{{ item.fullPrice }}
+              </span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Menu details -->
+    <div class="menu-right-column">
+      <div class="menu-text" [ngClass]="slideDirection ? 'slide-' + slideDirection : ''">
+
+        <h2>{{ selectedItem.name }}</h2>
+        <h4 *ngIf="selectedItem.koreanName">{{ selectedItem.koreanName }}</h4>
+
+        <p class="description">
+          {{ selectedItem.description || 'Delicious dish made with fresh ingredients' }}
+        </p>
+
+        <!-- PRICE SECTION -->
+        <div class="price" *ngIf="!selectedItem.price">
+          <span>
+            Half: ₹{{ selectedItem.halfPrice }}
+          </span>
+          <span class="mx-2">|</span>
+          <span>
+            Full: ₹{{ selectedItem.fullPrice }}
+          </span>
+        </div>
+
+        <!-- Single price -->
+        <div class="price" *ngIf="selectedItem.price">
+          <span>₹{{ selectedItem.price }}</span>
+        </div>
+
+        <!-- HALF / FULL TOGGLE -->
+        <div class="size-toggle" *ngIf="!selectedItem.price">
+          <button
+            (click)="selectedSize='half'; selectedAddon=null"
+            [class.active]="selectedSize === 'half'">
+            Half (₹{{ selectedItem.halfPrice }})
+          </button>
+          <button
+            (click)="selectedSize='full'; selectedAddon=null"
+            [class.active]="selectedSize === 'full'">
+            Full (₹{{ selectedItem.fullPrice }})
+          </button>
+        </div>
+
+        <!-- ADD-ONS SECTION -->
+        <div class="addons" *ngIf="selectedItem.addons?.length">
+          <h5>Add-ons</h5>
+
+          <label
+            class="addon-option"
+            *ngFor="let addon of selectedItem.addons">
+            <input
+              type="radio"
+              name="addon"
+              [checked]="selectedAddon?.name === addon.name"
+              (change)="selectedAddon = addon"
+            />
+            {{ addon.name }}
+            <span class="addon-price">
+              +₹{{ getCurrentAddonPrice(addon) }}
+              <span *ngIf="addon.halfPrice && addon.fullPrice" class="addon-price-breakdown">
+                (₹{{ addon.halfPrice }}/₹{{ addon.fullPrice }})
+              </span>
+              <span *ngIf="addon.price && !addon.halfPrice && !addon.fullPrice" class="addon-price-breakdown">
+                (₹{{ addon.price }})
+              </span>
+            </span>
+          </label>
+
+          <label class="addon-option">
+            <input
+              type="radio"
+              name="addon"
+              [checked]="!selectedAddon"
+              (change)="selectedAddon = null"
+            />
+            No Add-on
+          </label>
+        </div>
+
+        <!-- INGREDIENTS -->
+        <div
+          class="ingredients"
+          *ngIf="selectedItem.ingredients && selectedItem.ingredients.length > 0">
+          <h5>Ingredients</h5>
+          <div class="ingredients-list">
+            <span
+              *ngFor="let ingredient of selectedItem.ingredients"
+              class="ingredient-tag">
+              {{ ingredient }}
+            </span>
+          </div>
+        </div>
+
+        <!-- PRICE BREAKDOWN -->
+        <div class="price-breakdown" *ngIf="selectedAddon || (!selectedItem.price && selectedItem.addons)">
+          <div class="price-row">
+            <span>Base Price:</span>
+            <span>₹{{ getCurrentBasePrice() }}</span>
+          </div>
+          
+          <div class="price-row" *ngIf="selectedAddon">
+            <span>Addon ({{ selectedAddon.name }}):</span>
+            <span>+₹{{ getCurrentAddonPrice(selectedAddon) }}</span>
+          </div>
+          
+          <div class="price-row total-row">
+            <span>Total:</span>
+            <span class="total-price">₹{{ getFinalPrice(selectedItem) }}</span>
+          </div>
+        </div>
+
+        <!-- FINAL PRICE -->
+        <div class="price-highlight" *ngIf="!selectedAddon && !selectedItem.addons">
+          <span>Price: ₹{{ getFinalPrice(selectedItem) }}</span>
+        </div>
+
+        <button class="add-to-cart" (click)="addToCart(selectedItem)">
+          Add to Cart - ₹{{ getFinalPrice(selectedItem) }}
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation arrows for main items -->
+  <div class="menu-navigation" *ngIf="filteredItems.length > 1">
+    <button (click)="prevItem()" [disabled]="selectedItemIndex === 0">❮</button>
+    <button (click)="nextItem()" [disabled]="selectedItemIndex === filteredItems.length - 1">❯</button>
+  </div>
+
+</div>
+<!-- Toast notification -->
+<div class="cart-toast" [class.show]="showToast" (click)="hideToast()">
+  <div class="toast-content">
+    <div class="toast-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <div class="toast-message">
+      <strong>{{toastItemName}}</strong> added to cart
+      <div class="toast-price">₹{{toastItemPrice}}</div>
+    </div>
+    <button class="toast-close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+  <div class="toast-progress" [class.animate]="showToast"></div>
+</div>

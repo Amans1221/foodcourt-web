@@ -1,0 +1,49 @@
+<section class="featured">
+  <div class="container">
+    <h2 class="section-title">Our Signature Dishes</h2>
+    <p class="section-subtitle">Experience the authentic taste of Korea with our most popular dishes, crafted with traditional recipes and premium ingredients</p>
+    
+    <div class="featured-grid">
+      <div *ngFor="let item of featuredItems" class="featured-card">
+        <div class="featured-image">
+          <img [src]="item.image" [alt]="item.title">
+          <!-- Fixed: Use item.type as category -->
+          <div class="category-tag">{{item.type || 'Special'}}</div>
+          <div class="featured-badge">{{item.discount || 'Bestseller'}}</div>
+        </div>
+        
+        <div class="featured-content">
+          <!-- Fixed: Changed item.name to item.title -->
+          <h3>{{item.title}}</h3>
+          <p>{{item.description}}</p>
+          
+          <div class="featured-footer">
+            <div class="price-container">
+              <span class="price">{{item.price}}</span>
+              <span class="original-price" *ngIf="item.originalPrice">₹{{item.originalPrice}}</span>
+            </div>
+            <button class="order-btn" (click)="orderItem(item)">
+              <i class="fas fa-shopping-cart"></i>
+              Order Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="featured-view-all">
+      <button class="btn-view-all" routerLink="/menu">
+        <i class="fas fa-utensils"></i>
+        View Full Menu
+      </button>
+    </div>
+  </div>
+  
+  <!-- Add toast notification HTML here -->
+  <div class="toast-notification" *ngIf="showToast" [class.show]="showToast">
+    <div class="toast-content">
+      <i class="fas fa-check-circle"></i>
+      <span>{{toastMessage}}</span>
+    </div>
+  </div>
+</section>

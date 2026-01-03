@@ -1,0 +1,57 @@
+<header class="header" [class.scrolled]="isScrolled">
+  <nav class="nav-container">
+    <!-- Left: Logo & Toggle -->
+    <div class="nav-left">
+      <button class="menu-toggle" (click)="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="logo-section">
+        <img src="assets/logo.jpeg" alt="Maya's Mateul Logo" class="logo-img" />
+        <div class="logo-text">
+          <h1 class="logo-title">MAYA'S MATEUL</h1>
+          <span class="tagline">THE TASTE OF LOVE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Navigation Links -->
+    <div class="nav-center" [class.active]="isMenuOpen">
+      <a routerLink="/" class="nav-link" (click)="closeMenu()">Home</a>
+      <a routerLink="/menu" class="nav-link" (click)="closeMenu()">Menu</a>
+      
+      <!-- Order Online Link with condition -->
+      <a 
+        [routerLink]="cartCount > 0 ? '/order' : null" 
+        [class.disabled]="cartCount === 0"
+        (click)="onOrderOnlineClick($event)"
+        class="nav-link"
+      >
+        Order Online
+        <span *ngIf="cartCount === 0" class="order-hint">(Add items first)</span>
+      </a>
+      
+      <a routerLink="/about" class="nav-link" (click)="closeMenu()">About Us</a>
+      <a routerLink="/contact" class="nav-link" (click)="closeMenu()">Contact</a>
+    </div>
+
+    <!-- Right: Cart -->
+    <div class="nav-right">
+      <button class="cart-btn" (click)="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" *ngIf="cartCount > 0">
+          {{ cartCount }}
+        </span>
+      </button>
+      
+      <!-- Cart status indicator -->
+      <div *ngIf="cartCount === 0" class="empty-cart-indicator">
+        <i class="fas fa-info-circle"></i>
+        <span>Cart is empty</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Overlay for Mobile -->
+  <div class="mobile-overlay" [class.active]="isMenuOpen" (click)="closeMenu()"></div>
+</header>

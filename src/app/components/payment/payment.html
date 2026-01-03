@@ -1,0 +1,107 @@
+<!-- payment.html - UPDATED -->
+<section class="payment-section">
+  <div class="container">
+    <!-- Auto Verification Status -->
+    <div *ngIf="isAutoVerifying" class="auto-verify-status">
+      <div class="verifying-spinner">
+        <i class="fas fa-sync fa-spin"></i>
+      </div>
+      <p>Automatically checking for payment... (Attempt {{verificationAttempts}})</p>
+      <small>We'll detect your payment automatically. No need to enter transaction ID!</small>
+    </div>
+
+    <!-- Payment Timer (Show only when pending) -->
+    <div *ngIf="paymentStatus === 'pending'" class="payment-timer-card">
+      <i class="fas fa-clock"></i>
+      <div class="timer-content">
+        <h4>Complete Payment Within</h4>
+        <div class="timer">{{formatTime(minutes, seconds)}}</div>
+        <p *ngIf="isAutoVerifying">We're automatically checking for your payment</p>
+        <p *ngIf="!isAutoVerifying">Scan QR code or use UPI ID below</p>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="payment-methods" *ngIf="paymentStatus === 'pending'">
+      <div class="upi-payment-card">
+        <!-- QR Code Section -->
+        <div class="qr-section">
+          <div class="qr-code-container">
+            <img *ngIf="qrCodeImageUrl" 
+                 [src]="qrCodeImageUrl" 
+                 alt="Scan QR Code to Pay" 
+                 class="qr-img">
+            <div *ngIf="!qrCodeImageUrl" class="qr-placeholder">
+              <i class="fas fa-qrcode fa-4x"></i>
+              <p>Loading QR Code...</p>
+            </div>
+          </div>
+          <p class="qr-instruction">Scan with any UPI app</p>
+          
+          <button class="scan-btn" (click)="openUPIApp()">
+            <i class="fas fa-external-link-alt"></i> Open UPI App
+          </button>
+        </div>
+        
+        <!-- Manual UPI -->
+        <div class="manual-upi">
+          <div class="upi-details-card">
+            <div class="detail-row">
+              <span class="label">UPI ID:</span>
+              <div class="value-group">
+                <span class="value upi-id">{{restaurantUPI}}</span>
+                <button class="copy-btn" (click)="copyUPIId()">
+                  <i class="far fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+            <div class="detail-row">
+              <span class="label">Amount:</span>
+              <span class="value amount">₹{{paymentAmount}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Note/Description:</span>
+              <span class="value note">Order {{orderNumber}} - Maya Korean</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Fallback (Optional) -->
+    <div class="manual-fallback" *ngIf="paymentStatus === 'pending'">
+      <h4><i class="fas fa-keyboard"></i> Having issues?</h4>
+      <div class="transaction-input">
+        <label>Enter Transaction ID (Optional):</label>
+        <input 
+          type="text" 
+          [(ngModel)]="transactionId"
+          placeholder="If auto-detection fails, enter transaction ID here"
+          maxlength="50"
+        />
+        <button class="manual-confirm-btn" (click)="confirmPayment()" [disabled]="!transactionId">
+          <i class="fas fa-paper-plane"></i> Manually Confirm
+        </button>
+      </div>
+    </div>
+
+    <!-- Payment Success -->
+    <div *ngIf="paymentStatus === 'confirmed'" class="success-container">
+      <div class="success-card">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Payment Confirmed Automatically!</h2>
+        <p class="order-id">Order #: <strong>{{orderNumber}}</strong></p>
+        <p class="success-message">
+          Your payment of <strong>₹{{paymentAmount}}</strong> has been detected automatically.
+          WhatsApp notifications have been sent to the restaurant.
+        </p>
+        
+        <div class="redirect-message">
+          <p>Redirecting to order summary...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

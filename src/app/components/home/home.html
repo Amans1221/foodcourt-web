@@ -1,0 +1,148 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="logo-badge">
+          <span class="logo-text">MAYA'S MATEUL</span>
+          <span class="tagline">THE TASTE OF KOREA</span>
+        </div>
+        <h1 class="hero-title">Authentic <span class="highlight">Korean</span> Cuisine</h1>
+        <p class="hero-description">Experience the true taste of Korea with our traditional recipes passed down through generations. From fiery Kimchi to sizzling Bulgogi, every dish tells a story.</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Authentic Dishes</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">30min</span>
+            <span class="stat-label">Avg. Delivery</span>
+          </div>
+        </div>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" routerLink="/menu">
+            <i class="fas fa-utensils"></i>
+            View Full Menu
+          </button>
+          <button class="btn btn-secondary" routerLink="/order">
+            <i class="fas fa-bolt"></i>
+            Order Now
+          </button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-card card-1">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop&q=80" alt="Bibimbap">
+          <span>Bibimbap</span>
+        </div>
+        <div class="floating-card card-2">
+          <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80" alt="Kimchi">
+          <span>Kimchi</span>
+        </div>
+        <div class="floating-card card-3">
+          <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop&q=80" alt="Bulgogi">
+          <span>Bulgogi</span>
+        </div>
+        <div class="main-dish">
+          <img src="assets/logo.jpeg" alt="Korean Cuisine">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Countdown Timer -->
+  <!-- <section class="offers-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Limited Time Offers</h2>
+        <p class="section-subtitle">Special deals and discounts available for a limited time only. Don't miss out!</p>
+      </div>
+
+      <div class="countdown-timer">
+        <div class="timer-title">🎁 26% Discount Offer Ends In:</div>
+        <div class="timer-grid">
+          <div class="timer-unit">
+            <span class="timer-value">{{getFormattedTime(countdown.days)}}</span>
+            <span class="timer-label">Days</span>
+          </div>
+          <div class="timer-unit">
+            <span class="timer-value">{{getFormattedTime(countdown.hours)}}</span>
+            <span class="timer-label">Hours</span>
+          </div>
+          <div class="timer-unit">
+            <span class="timer-value">{{getFormattedTime(countdown.minutes)}}</span>
+            <span class="timer-label">Minutes</span>
+          </div>
+          <div class="timer-unit">
+            <span class="timer-value">{{getFormattedTime(countdown.seconds)}}</span>
+            <span class="timer-label">Seconds</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="offers-grid">
+        <div *ngFor="let offer of specialOffers" class="offer-card" [class]="offer.badge">
+          <div class="offer-image">
+            <img [src]="offer.image" [alt]="offer.title">
+            <div class="offer-badge">{{offer.discount}}</div>
+          </div>
+          <div class="offer-content">
+            <h3>{{offer.title}}</h3>
+            <p>{{offer.description}}</p>
+            <div class="offer-pricing">
+              <span class="current-price" *ngIf="offer.type !== 'discount'">₹{{offer.price}}</span>
+              <span class="current-price" *ngIf="offer.type === 'discount'">{{offer.discount}}</span>
+              <span class="original-price" *ngIf="offer.originalPrice">₹{{offer.originalPrice}}</span>
+              <span class="discount-percent" *ngIf="offer.type !== 'discount'">{{offer.discount}}</span>
+            </div>
+            <button class="btn btn-offer" routerLink="/order">
+              <i class="fas fa-shopping-cart"></i>
+              Grab This Offer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Featured Section -->
+  <app-featured></app-featured>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Experience Authentic Korean Flavors?</h2>
+        <p>Order now and get exclusive discounts on your first order. Perfect blend of traditional taste and modern service.</p>
+        
+        <div class="promo-code">
+          USE CODE: <strong>MAYA26</strong> FOR 26% OFF
+        </div>
+        
+        <p>Valid until January 4th, 2024. Minimum order ₹800.</p>
+        
+        <div class="cta-buttons">
+          <button class="btn btn-primary" routerLink="/order">
+            <i class="fas fa-mobile-alt"></i>
+            Order Online
+          </button>
+          <button class="btn btn-secondary" routerLink="/menu">
+            <i class="fas fa-book-open"></i>
+            View Full Menu
+          </button>
+          <button class="btn btn-secondary" routerLink="/reservation">
+            <i class="fas fa-calendar"></i>
+            Book Table
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

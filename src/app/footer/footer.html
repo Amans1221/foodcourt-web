@@ -1,0 +1,114 @@
+<footer class="footer">
+  <div class="footer-container">
+    <!-- Top Section: Logo, Social, Newsletter -->
+    <div class="footer-top">
+      <!-- Logo and Description -->
+      <div class="footer-brand">
+        <h3 class="brand-name">MAYA'S MATEUL Restaurant</h3>
+        <p class="brand-tagline">Authentic Korean Cuisine Experience</p>
+        <p class="brand-description">
+          Since 2025, we've been serving authentic Korean dishes made with traditional recipes and the freshest ingredients.
+        </p>
+      </div>
+
+      <!-- Social Media -->
+      <div class="footer-social">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a 
+            *ngFor="let social of socialLinks" 
+            [href]="social.url" 
+            target="_blank" 
+            class="social-link"
+            [class]="social.class"
+            [attr.aria-label]="'Follow us on ' + social.platform">
+            <span class="social-icon {{ social.icon }}"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="footer-newsletter">
+        <h4>Newsletter</h4>
+        <p class="newsletter-description">
+          Subscribe to get special offers, free giveaways, and seasonal deals.
+        </p>
+        <form (ngSubmit)="onNewsletterSubmit()" class="newsletter-form">
+          <div class="input-group">
+            <input 
+              type="email" 
+              [(ngModel)]="newsletterEmail" 
+              name="newsletterEmail"
+              placeholder="Enter your email" 
+              class="newsletter-input"
+              required>
+            <button type="submit" class="newsletter-btn">
+              Subscribe
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Middle Section: Links Grid -->
+    <div class="footer-middle">
+      <!-- Quick Links -->
+      <div class="links-section">
+        <h5>Quick Links</h5>
+        <div class="links-grid">
+          <a *ngFor="let link of quickLinks" [routerLink]="link.path" class="footer-link">
+            {{ link.label }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Menu Categories -->
+      <div class="links-section">
+        <h5>Our Menu</h5>
+        <div class="links-grid">
+          <a *ngFor="let category of menuCategories" class="footer-link">
+            {{ category.label }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="links-section">
+        <h5>Contact Info</h5>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <span class="contact-text">{{ contactInfo.address }}</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📞</span>
+            <span class="contact-text">{{ contactInfo.phone }}</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <span class="contact-text">{{ contactInfo.email }}</span>
+          </div>
+        </div>
+        <div class="hours-info">
+          <h6>Opening Hours</h6>
+          <p><strong>Mon-Fri:</strong> {{ contactInfo.hours.weekdays }}</p>
+          <p><strong>Sat-Sun:</strong> {{ contactInfo.hours.weekends }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="copyright">
+          <p>&copy; {{ currentYear }} MAYA'S MATEUL Restaurant. All rights reserved.</p>
+        </div>
+        <div class="footer-bottom-links">
+          <a routerLink="/privacy" class="bottom-link">Privacy Policy</a>
+          <a routerLink="/terms" class="bottom-link">Terms of Service</a>
+          <a routerLink="/sitemap" class="bottom-link">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

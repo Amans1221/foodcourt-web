@@ -1,0 +1,100 @@
+<!-- cart.html -->
+<div class="cart-overlay" [class.active]="isCartOpen" (click)="closeCart()">
+  <div class="cart-sidebar" (click)="$event.stopPropagation()">
+    <div class="cart-header">
+      <h2><i class="fas fa-shopping-cart"></i> Your Order</h2>
+      <button class="close-btn" (click)="closeCart()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="cart-items" *ngIf="cartItems.length > 0; else emptyCart">
+      <div class="cart-summary">
+        <span class="item-count">{{cartItems.length}} item{{cartItems.length > 1 ? 's' : ''}} in cart</span>
+        <button class="clear-cart" (click)="cartService.clearCart()">
+          <i class="fas fa-trash-alt"></i> Clear All
+        </button>
+      </div>
+      
+      <div *ngFor="let item of cartItems" class="cart-item">
+        <div class="item-image-container">
+          <img [src]="item.image" [alt]="item.name" class="item-image">
+          <div class="quantity-badge">{{item.quantity}}</div>
+        </div>
+        
+        <div class="item-details">
+          <h4>{{item.name}}</h4>
+          <p class="item-price">{{formatPrice(item.price)}} each</p>
+          
+          <div class="quantity-controls">
+            <button class="qty-btn minus" (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="quantity-display">{{item.quantity}}</span>
+            <button class="qty-btn plus" (click)="increaseQuantity(item)">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="item-total">
+          <span class="subtotal">{{formatPrice(item.price * item.quantity)}}</span>
+          <button class="remove-btn" (click)="removeItem(item)" title="Remove item">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyCart>
+      <div class="empty-cart">
+        <div class="empty-icon">
+          <i class="fas fa-shopping-basket"></i>
+        </div>
+        <p>Your cart is empty</p>
+        <p class="empty-subtext">Add delicious dishes from our menu</p>
+        <button class="browse-menu" routerLink="/menu" (click)="closeCart()">
+          <i class="fas fa-utensils"></i> Browse Menu
+        </button>
+      </div>
+    </ng-template>
+
+    <div class="cart-footer" *ngIf="cartItems.length > 0">
+      <div class="price-breakdown">
+        <div class="price-row">
+          <span>Subtotal:</span>
+          <span>{{formatPrice(getTotalPrice())}}</span>
+        </div>
+        <div class="price-row">
+          <span>GST (5%):</span>
+          <span>{{formatPrice(getTotalPrice() * 0.05)}}</span>
+        </div>
+        <div class="price-row total">
+          <strong>Total Amount:</strong>
+          <strong class="total-amount">{{formatPrice(getTotalPrice() * 1.05)}}</strong>
+        </div>
+      </div>
+      
+      <div class="cart-actions">
+        <button class="continue-shopping" (click)="closeCart()">
+          <i class="fas fa-arrow-left"></i> Continue Shopping
+        </button>
+        <button class="checkout-btn" (click)="proceedToCheckout()">
+          <i class="fas fa-lock" style="margin-left: -52px;"></i> Proceed to Checkout
+          <span class="checkout-total">{{formatPrice(getTotalPrice() * 1.05)}}</span>
+        </button>
+      </div>
+      
+      <div class="payment-methods">
+        <p>We accept:</p>
+        <div class="payment-icons">
+          <i class="fab fa-google-pay"></i>
+          <i class="fab fa-apple-pay"></i>
+          <i class="fas fa-credit-card"></i>
+          <i class="fas fa-university"></i>
+          <i class="fas fa-qrcode"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

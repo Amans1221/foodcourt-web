@@ -1,0 +1,18 @@
+<section class="offers-section">
+  <div class="container">
+    <h3 class="section-title">🍔 Offers & Promotions</h3>
+    <p class="section-subtitle">Delicious deals curated just for you</p>
+
+    <div class="offers-grid">
+      <div class="offer-card" *ngFor="let o of offers">
+        <div class="offer-img-wrapper">
+          <img [src]="o.img" [alt]="o.title" class="offer-img" />
+          <div class="offer-overlay">
+            <button class="view-btn">View Details</button>
+          </div>
+        </div>
+        <h5 class="offer-title">{{ o.title }}</h5>
+      </div>
+    </div>
+  </div>
+</section>

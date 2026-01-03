@@ -1,0 +1,340 @@
+<!-- order.html -->
+<section class="order-options">
+  <div class="container">
+    <div class="order-header">
+      <button class="back-btn" (click)="backToMenu()">
+        <i class="fas fa-arrow-left"></i> Back to Menu
+      </button>
+      <h2 class="section-title">Complete Your Order</h2>
+      <div class="order-summary">
+        <div class="cart-summary-badge">
+          <i class="fas fa-shopping-cart"></i>
+          <span>{{cartService.getCartCount()}} items</span>
+          <span class="cart-total">{{formatPrice(cartTotal)}}</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-subtitle">Choose how you'd like to receive your order</p>
+
+    <div class="options-grid">
+      <div *ngFor="let o of options" 
+           class="opt-card" 
+           [class.selected]="selectedOptionId === o.id"
+           [class]="o.animationType + '-card'">
+        
+        <div class="card-header">
+          <span class="option-icon">{{o.icon}}</span>
+          <span class="estimated-time">{{o.estimatedTime}}</span>
+        </div>
+        
+        <!-- Delivery Animation -->
+        <div class="animation-container delivery-animation" *ngIf="o.animationType === 'delivery'">
+          <div class="bike">
+            <div class="bike-body"></div>
+            <div class="front-wheel"></div>
+            <div class="back-wheel"></div>
+            <div class="delivery-box"></div>
+          </div>
+          <div class="road"></div>
+          <div class="house"></div>
+        </div>
+        
+        <!-- Pickup Animation -->
+        <div class="animation-container pickup-animation" *ngIf="o.animationType === 'pickup'">
+          <div class="store-front">
+            <div class="store-building">
+              <div class="store-window"></div>
+              <div class="store-door"></div>
+              <div class="store-sign">MAYA'S</div>
+            </div>
+          </div>
+          <div class="customer">
+            <div class="person">
+              <div class="person-head"></div>
+              <div class="person-body"></div>
+            </div>
+            <div class="food-bag"></div>
+          </div>
+        </div>
+        
+        <!-- Dine-in Animation -->
+        <div class="animation-container dinein-animation" *ngIf="o.animationType === 'dinein'">
+          <div class="restaurant-table">
+            <div class="table-top"></div>
+            <div class="table-leg left-leg"></div>
+            <div class="table-leg right-leg"></div>
+          </div>
+          <div class="plate">
+            <div class="food-item"></div>
+          </div>
+          <div class="utensils">
+            <div class="fork"></div>
+            <div class="spoon"></div>
+          </div>
+          <div class="chair left-chair"></div>
+          <div class="chair right-chair"></div>
+        </div>
+        
+        <h5 class="opt-title">{{ o.title }}</h5>
+        <p class="opt-desc">{{ o.desc }}</p>
+        
+        <div class="option-features" *ngIf="o.id === 1">
+          <span class="feature-tag"><i class="fas fa-bolt"></i> 30-min delivery</span>
+          <span class="feature-tag"><i class="fas fa-truck"></i> Free above ₹500</span>
+        </div>
+        
+        <div class="option-features" *ngIf="o.id === 2">
+          <span class="feature-tag"><i class="fas fa-clock"></i> Ready in 20 min</span>
+          <span class="feature-tag"><i class="fas fa-percent"></i> No delivery fee</span>
+        </div>
+        
+        <div class="option-features" *ngIf="o.id === 3">
+          <span class="feature-tag"><i class="fas fa-wine-glass"></i> Full service</span>
+          <span class="feature-tag"><i class="fas fa-music"></i> Korean ambiance</span>
+        </div>
+        
+        <button class="select-btn" (click)="selectOption(o.id)">
+          {{ selectedOptionId === o.id ? '✓ Selected' : 'Select' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- ORDER FORM -->
+    <div *ngIf="selectedOptionId" class="order-form-container">
+      <div class="form-header">
+        <h3>
+          <i class="fas fa-file-alt"></i>
+          {{ selectedOptionTitle }} Details
+        </h3>
+        <button class="cancel-btn" (click)="cancelSelection()">
+          <i class="fas fa-times"></i> Change Option
+        </button>
+      </div>
+
+      <div class="order-summary-card">
+        <h4><i class="fas fa-receipt"></i> Order Summary</h4>
+        <div class="summary-item">
+          <span>Subtotal ({{cartService.getCartCount()}} items):</span>
+          <span>{{formatPrice(cartTotal)}}</span>
+        </div>
+        <div class="summary-item">
+          <span>GST (5%):</span>
+          <span>{{formatPrice(cartTotal * 0.05)}}</span>
+        </div>
+        
+        <!-- Discount Line -->
+        <!-- <div *ngIf="couponApplied" class="summary-item discount">
+          <span>Discount ({{appliedCoupon?.code}}):</span>
+          <span>- {{formatPrice(discountAmount)}}</span>
+        </div> -->
+        
+        <div class="summary-item total">
+          <strong>Total Amount:</strong>
+          <strong class="final-total">{{formatPrice(getFinalTotal())}}</strong>
+        </div>
+      </div>
+
+      <!-- COUPON SECTION -->
+      <div class="coupon-section">
+        <div class="coupon-header">
+          <i class="fas fa-tag"></i>
+          <span>Apply Coupon Code</span>
+        </div>
+        
+        <div *ngIf="!couponApplied; else couponAppliedTemplate">
+          <div class="coupon-input-group">
+            <input 
+              type="text" 
+              class="coupon-input" 
+              placeholder="Enter coupon code (e.g., WELCOME10)"
+              [(ngModel)]="couponCode"
+              name="couponCode"
+              #couponInput="ngModel"
+            >
+            <button 
+              type="button" 
+              class="apply-coupon-btn"
+              (click)="applyCoupon()"
+              [disabled]="!couponCode || couponCode.length < 3"
+            >
+              Apply
+            </button>
+          </div>
+          
+          <div *ngIf="couponError" class="coupon-error">
+            <i class="fas fa-exclamation-circle"></i>
+            {{couponError}}
+          </div>
+          
+          <div *ngIf="couponSuccess" class="coupon-success">
+            <i class="fas fa-check-circle"></i>
+            {{couponSuccess}}
+          </div>
+          
+          <div class="form-note" style="margin-top: 1rem;">
+            <i class="fas fa-lightbulb"></i>
+            Try codes: <strong>WELCOME10</strong> (10% off) | <strong>FREEDEL</strong> (Free delivery)
+          </div>
+        </div>
+        
+        <ng-template #couponAppliedTemplate>
+          <div class="coupon-applied">
+            <div class="coupon-details">
+              <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+              <div>
+                <strong>{{appliedCoupon.code}}</strong> applied successfully!
+                <div style="font-size: 0.85rem; color: #666;">
+                  {{appliedCoupon.description}}
+                </div>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              class="remove-coupon"
+              (click)="removeCoupon()"
+            >
+              <i class="fas fa-times"></i> Remove
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+      <form #orderForm="ngForm" (ngSubmit)="submitOrder(orderForm)">
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Your Full Name *</label>
+            <input type="text" name="name" ngModel required placeholder="Enter your name" />
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Phone Number *</label>
+            <input type="tel" name="phone" ngModel required placeholder="Enter 10-digit number" />
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedOptionId === 1">
+          <label><i class="fas fa-map-marker-alt"></i> Delivery Address *</label>
+          <textarea name="address" ngModel required rows="3" placeholder="Enter full address with landmark"></textarea>
+          <div class="form-note">
+            <i class="fas fa-info-circle"></i>
+            Free delivery on orders above ₹500
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedOptionId === 2">
+          <label><i class="fas fa-clock"></i> Preferred Pickup Time</label>
+          <input type="time" name="pickupTime" ngModel required />
+          <div class="form-note">
+            <i class="fas fa-info-circle"></i>
+            Your order will be ready in 20 minutes
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedOptionId === 3">
+          <label><i class="fas fa-calendar-alt"></i> Reservation Date & Time *</label>
+          <div class="datetime-inputs">
+            <input type="date" name="reservationDate" ngModel required />
+            <input type="time" name="reservationTime" ngModel required />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-users"></i> Number of Guests</label>
+            <select name="guests" ngModel required>
+              <option value="" disabled selected>Select number of guests</option>
+              <option value="1">1 person</option>
+              <option value="2">2 people</option>
+              <option value="3">3 people</option>
+              <option value="4">4 people</option>
+              <option value="5">5 people</option>
+              <option value="6">6+ people</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="form-group">
+          <label><i class="fas fa-credit-card"></i> Payment Method *</label>
+          <div class="payment-methods">
+            <div class="payment-option" (click)="paymentMethod = 'cash'">
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="cash" 
+                [(ngModel)]="paymentMethod"
+                id="cash"
+                required
+              />
+              <label for="cash" class="payment-label">
+                <div class="payment-icon">
+                  <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="payment-details">
+                  <h5>Cash on Delivery</h5>
+                  <p>Pay when you receive your order</p>
+                </div>
+                <div class="payment-check">
+                  <i class="fas fa-check" *ngIf="paymentMethod === 'cash'"></i>
+                </div>
+              </label>
+            </div>
+            
+            <div class="payment-option" (click)="paymentMethod = 'online'">
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="online" 
+                [(ngModel)]="paymentMethod"
+                id="online"
+                required
+              />
+              <label for="online" class="payment-label">
+                <div class="payment-icon">
+                  <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="payment-details">
+                  <h5>Online Payment</h5>
+                  <p>Pay securely with credit/debit card or UPI</p>
+                </div>
+                <div class="payment-check">
+                  <i class="fas fa-check" *ngIf="paymentMethod === 'online'"></i>
+                </div>
+              </label>
+            </div>
+          </div>
+          
+          <div *ngIf="paymentMethod === 'cash'" class="form-note" style="margin-top: 1rem;">
+            <i class="fas fa-info-circle"></i>
+            <span>
+              Cash on delivery available for orders up to ₹2000. Please keep exact change ready for the delivery person.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-sticky-note"></i> Special Instructions (Optional)</label>
+          <textarea name="instructions" ngModel rows="2" placeholder="Any dietary preferences, allergies, or special requests"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-btn" [disabled]="!orderForm.valid">
+            <i class="fas" [class]="paymentMethod === 'cash' ? 'fa-check-circle' : 'fa-lock'"></i>
+            {{ paymentMethod === 'cash' ? 'Place Order (Cash)' : 'Proceed to Payment' }}
+            <span class="btn-total">{{formatPrice(getFinalTotal())}}</span>
+          </button>
+        </div>
+
+        <div class="security-note">
+          <i class="fas fa-shield-alt"></i>
+          Your information is secure. {{ paymentMethod === 'cash' ? 'No payment details required.' : 'We use encrypted payment processing.' }}
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="!selectedOptionId && cartTotal > 0" class="continue-shopping">
+      <p>Not ready to order yet?</p>
+      <button class="browse-btn" (click)="backToMenu()">
+        <i class="fas fa-utensils"></i> Continue Shopping
+      </button>
+    </div>
+  </div>
+</section>

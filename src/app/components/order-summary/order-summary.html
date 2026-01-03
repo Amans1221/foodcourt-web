@@ -1,0 +1,121 @@
+<!-- order-summary.html -->
+<section class="order-summary-section">
+  <div class="container">
+    <!-- Back Button -->
+    <button class="back-btn" (click)="back()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+
+    <div class="summary-card">
+      <!-- Success Icon -->
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      
+      <h1>Order Confirmed!</h1>
+      <p class="order-id">Order #: <strong>{{orderSummary?.orderId}}</strong></p>
+      <p class="order-id">Transaction ID: <strong>{{orderSummary?.transactionId}}</strong></p>
+      
+      <div class="order-status">
+        <div class="status-badge status-confirmed">
+          <i class="fas fa-check"></i> Payment Confirmed
+        </div>
+        <p class="status-time">Order placed at {{formatTime(orderSummary?.timestamp)}}</p>
+      </div>
+      
+      <!-- Order Details -->
+      <div class="order-details-section">
+        <h3><i class="fas fa-box"></i> Order Details</h3>
+        
+        <!-- Customer Info -->
+        <div class="info-card">
+          <h4><i class="fas fa-user"></i> Customer Information</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Name:</span>
+              <span class="value">{{orderSummary?.orderData?.customerName || 'Not specified'}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Phone:</span>
+              <span class="value">{{orderSummary?.orderData?.formValues?.phone || 'Not provided'}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Order Type:</span>
+              <span class="value">{{orderSummary?.orderData?.option || 'Not specified'}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Order Time:</span>
+              <span class="value">{{formatTime(orderSummary?.timestamp)}}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Order Items -->
+        <div class="items-card">
+          <h4><i class="fas fa-utensils"></i> Order Items ({{getTotalItems()}} items)</h4>
+          
+          <div class="items-list">
+            <div *ngFor="let item of orderItems; let i = index" class="item-row">
+              <div class="item-info">
+                <span class="item-name">{{i + 1}}. {{item.name}}</span>
+                <span class="item-quantity">x {{item.quantity || 1}}</span>
+              </div>
+              <span class="item-price">₹{{getItemTotal(item)}}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="summary-card-details">
+          <h4><i class="fas fa-receipt"></i> Order Summary</h4>
+          
+          <div class="summary-row">
+            <span class="label">Subtotal:</span>
+            <span class="value">₹{{orderSummary?.orderData?.subtotal || 0}}</span>
+          </div>
+          
+          <div class="summary-row">
+            <span class="label">GST (5%):</span>
+            <span class="value">₹{{orderSummary?.orderData?.gst || 0}}</span>
+          </div>
+          
+          <div *ngIf="orderSummary?.orderData?.discount > 0" class="summary-row discount">
+            <span class="label">Discount:</span>
+            <span class="value">-₹{{orderSummary?.orderData?.discount || 0}}</span>
+          </div>
+          
+          <div class="summary-row total">
+            <span class="label">Total Amount:</span>
+            <span class="value">₹{{orderSummary?.amount}}</span>
+          </div>
+        </div>
+        
+        <!-- Next Steps -->
+        <div class="next-steps">
+          <h4><i class="fas fa-list-check"></i> What's Next?</h4>
+          <ul>
+            <li><i class="fas fa-check-circle"></i> WhatsApp notification sent to restaurant</li>
+            <li><i class="fas fa-check-circle"></i> Order confirmed and preparation started</li>
+            <li *ngIf="orderSummary?.orderData?.option === 'Order for Delivery'">
+              <i class="fas fa-truck"></i> Delivery in 30-45 minutes
+            </li>
+            <li *ngIf="orderSummary?.orderData?.option === 'Order for Pickup'">
+              <i class="fas fa-store"></i> Ready for pickup in 20 minutes
+            </li>
+            <li><i class="fas fa-clock"></i> You'll receive updates on WhatsApp</li>
+          </ul>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="home-btn" (click)="goToHome()">
+            <i class="fas fa-home"></i> Back to Home
+          </button>
+          <button class="print-btn" (click)="printReceipt()">
+            <i class="fas fa-print"></i> Print Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
