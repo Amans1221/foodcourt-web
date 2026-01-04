@@ -80,7 +80,7 @@ export class FeaturedComponent {
       originalPrice: 549,
       discount: 'Best Seller',
       badge: 'bestseller',
-      image: 'https://img.freepik.com/premium-photo/beoseotbokkeum-stirfried-mushrooms-with-various-seasonings-vegetables-korean-side-dish_921026-34788.jpg?w=500&auto=format&fit=crop',
+      image: 'https://marcsrecipes.com/wp-content/uploads/2023/09/glazed-japanese-mushrooms-009-1024x683.jpg?w=500&auto=format&fit=crop',
       type: 'bestseller'
     }
   ];

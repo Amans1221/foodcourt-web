@@ -25,7 +25,8 @@ export class MenuComponent {
     'Maya Special',
     'Bibimbap',
     'Curries & Noodles',
-    'Dak Galbi',
+    'Combo Offers',
+    'Mandu (Korean Momos)',
     'Korean Ramen',
     'Beverages'
   ];

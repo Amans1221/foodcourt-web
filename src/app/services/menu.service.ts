@@ -25,15 +25,15 @@ export class MenuService {
       image: 'https://hips.hearstapps.com/hmg-prod/images/fully-loaded-tornado-potato-lead-662030d336ce9.jpg?w=500&auto=format&fit=crop',
       ingredients: ['Potato', 'Cheese', 'Sour cream', 'Chives', 'Bacon bits']
     },
-    { 
-      id: 3, 
-      name: 'Beoseot-Tangun (Fried Mushrooms)', 
-      category: 'Starters & Snacks', 
-      price: 389,
-      description: 'Whole mushrooms coated in crispy batter and golden fried',
-      image: 'https://i.pinimg.com/originals/2f/b8/bd/2fb8bd1533f920bd3c2093528e643d42.webp?w=500&auto=format&fit=crop',
-      ingredients: ['Mushrooms', 'Flour batter', 'Garlic', 'Pepper', 'Oil']
-    },
+    // { 
+    //   id: 3, 
+    //   name: 'Beoseot-Tangun (Fried Mushrooms)', 
+    //   category: 'Starters & Snacks', 
+    //   price: 389,
+    //   description: 'Whole mushrooms coated in crispy batter and golden fried',
+    //   image: 'https://marcsrecipes.com/wp-content/uploads/2023/09/glazed-japanese-mushrooms-009-1024x683.jpg?w=500&auto=format&fit=crop',
+    //   ingredients: ['Mushrooms', 'Flour batter', 'Garlic', 'Pepper', 'Oil']
+    // },
     { 
       id: 4, 
       name: 'Cheesy Corn Dog', 
@@ -52,7 +52,15 @@ export class MenuService {
       image: 'https://tse3.mm.bing.net/th/id/OIP.7BSoHetcTo8BVjPQtVg9uQHaGE?w=1280&h=1049&rs=1&pid=ImgDetMain&o=7&rm=3?w=500&auto=format&fit=crop',
       ingredients: ['Pork sausage', 'Cornmeal batter', 'Oil', 'Mustard', 'Ketchup']
     },
-
+{ 
+  id: 6, 
+  name: 'Shabaley (2 pcs)', 
+  category: 'Starters & Snacks', // or 'Shabaley' or 'Tibetan Special'
+  price: 99, // Single price since it's typically sold as 2 pieces
+  description: 'Tibetan fried bread stuffed with spiced meat/veg, served with spicy dipping sauce',
+  image: 'https://i.ytimg.com/vi/XQ4Ub0dxJKw/maxresdefault.jpg?w=500&auto=format&fit=crop',
+  ingredients: ['All-purpose flour', 'Minced meat/veg', 'Onions', 'Garlic', 'Ginger', 'Spices', 'Spring onions']
+},
     // 🌶️ KOREAN LAPHING
     { 
       id: 6, 
@@ -323,7 +331,7 @@ export class MenuService {
       halfPrice: 455,
       fullPrice: 649,
       description: 'Braised spicy chicken, is a traditional Korean dish made by boiling chunks of chicken with vegetables and spices.',
-      image: 'https://preview.redd.it/tteokbokki-korean-spicy-rice-cake-v0-894c6uqysna81.jpg?width=640&crop=smart&auto=webp&s=ec4329897ffd1375c4b590dfa4808e9a0b68c707?w=500&auto=format&fit=crop',
+      image: 'https://i.pinimg.com/736x/a3/85/73/a38573ede77ebf387d6484c79bfaa2d9.jpg?width=640&crop=smart&auto=webp&s=ec4329897ffd1375c4b590dfa4808e9a0b68c707?w=500&auto=format&fit=crop',
       ingredients: ['Chicken', 'Vegetables', 'Spices', 'Soya Sauce', 'Seasoning Paste']
     },
     { 
@@ -352,13 +360,13 @@ export class MenuService {
       category: 'Maya Special', 
       price: 455,
       description: 'Boe-soet Bok-keum also known as Stir-Fried Mushrooms, is a traditional Korean dish that showcases the natural umami flavors of mushrooms.',
-      image: 'https://img.freepik.com/premium-photo/beoseotbokkeum-stirfried-mushrooms-with-various-seasonings-vegetables-korean-side-dish_921026-34788.jpg?w=500&auto=format&fit=crop',
+      image: 'https://marcsrecipes.com/wp-content/uploads/2023/09/glazed-japanese-mushrooms-009-1024x683.jpg?w=500&auto=format&fit=crop',
       ingredients: ['Mushrooms', 'Garlic', 'Soy Sauce', 'Sesame Oil', 'Green Onions']
     },
     { 
       id: 30, 
       name: 'Dak Galbi', 
-      category: 'Dak Galbi', 
+      category: 'Maya Special', 
       halfPrice: 349, 
       fullPrice: 399,
       description: 'Spicy Korean stir-fried chicken with cabbage, sweet potato and rice cakes',
@@ -528,7 +536,74 @@ export class MenuService {
       description: 'Bottled natural mineral water, 500ml',
       image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=500&auto=format&fit=crop',
       ingredients: ['Natural mineral water']
-    }
+    },
+{ 
+  id: 48, 
+  name: 'Mandu MixVeg', 
+  category: 'Mandu(Korean Momos)', 
+  halfPrice: 129,
+  fullPrice: 229,
+  description: 'Korean dumplings stuffed with a flavorful mix of fresh vegetables and aromatic spices (Half: 4 pieces, Full: 8 pieces)',
+  image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&auto=format&fit=crop',
+  ingredients: ['Cabbage', 'Carrots', 'Spring onions', 'Garlic', 'Ginger', 'Soy sauce', 'Sesame oil', 'Dumpling wrappers']
+},
+{ 
+  id: 49, 
+  name: 'Mandu Paneer', 
+  category: 'Mandu(Korean Momos)', 
+  halfPrice: 165,
+  fullPrice: 209,
+  description: 'Korean-style dumplings filled with spiced paneer and fresh herbs (Half: 4 pieces, Full: 8 pieces)',
+  image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&auto=format&fit=crop',
+  ingredients: ['Paneer', 'Onions', 'Garlic', 'Ginger', 'Green chilies', 'Coriander leaves', 'Spices', 'Dumpling wrappers']
+},
+{ 
+  id: 50, 
+  name: 'Mandu Chicken', 
+  category: 'Mandu(Korean Momos)', 
+  halfPrice: 195,
+  fullPrice: 259,
+  description: 'Traditional Korean dumplings with juicy chicken and vegetable filling (Half: 4 pieces, Full: 8 pieces)',
+  image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&auto=format&fit=crop',
+  ingredients: ['Chicken mince', 'Cabbage', 'Spring onions', 'Garlic', 'Ginger', 'Soy sauce', 'Sesame oil', 'Black pepper', 'Dumpling wrappers']
+},
+{ 
+  id: 51, 
+  name: 'Mandu Mutton', 
+  category: 'Mandu(Korean Momos)', 
+  halfPrice: 259,
+  fullPrice: 325,
+  description: 'Hearty Korean dumplings filled with seasoned mutton and aromatic spices (Half: 4 pieces, Full: 8 pieces)',
+  image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&auto=format&fit=crop',
+  ingredients: ['Mutton mince', 'Onions', 'Garlic', 'Ginger', 'Green chilies', 'Coriander leaves', 'Cumin', 'Garam masala', 'Dumpling wrappers']
+},
+ { 
+    id: 52, 
+    name: 'Rice/Noodles with Thai Cury Veg ', 
+    category: 'Combo Offers', 
+    price: 455,
+    description: 'Complete meal combo with your choice of rice or noodles served with vegetable curry',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.vkYisM4yDIM8tE5OTYVbTgHaJ3?w=500&auto=format&fit=crop',
+    ingredients: ['Rice or Noodles', 'Vegetable curry', 'Mixed vegetables in gravy', 'Side dish']
+  },
+  { 
+    id: 53, 
+    name: 'Rice/Noodles with Thai Cury Non-Veg', 
+    category: 'Combo Offers', 
+    price: 519,
+    description: 'Complete meal combo with your choice of rice or noodles served with non-vegetarian curry',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.jkjyy2ez6Np2Ex0IEQNTsQHaE8?w=500&auto=format&fit=crop',
+    ingredients: ['Rice or Noodles', 'Chicken/Mutton curry', 'Spiced gravy', 'Side dish']
+  },
+  { 
+    id: 54, 
+    name: 'Rice/Noodles with Thai Cury Seafood ', 
+    category: 'Combo Offers', 
+    price: 649,
+    description: 'Premium combo with your choice of rice or noodles served with seafood curry',
+    image: 'https://i0.wp.com/natteats.com/wp-content/uploads/2021/05/red-curry-salmon-natteats-1-4.jpg?w=500&auto=format&fit=crop',
+    ingredients: ['Rice or Noodles', 'Seafood curry', 'Fish/Prawns in gravy', 'Side dish']
+  }
   ];
 
   getMenuItems(): Observable<MenuItem[]> {
