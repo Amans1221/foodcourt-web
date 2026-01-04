@@ -1,15 +1,10 @@
-// payment.component.ts - UPDATED
+// payment.component.ts - SIMPLIFIED WITH ONE BUTTON
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { environment } from '../../../environments/environment';
-import { 
-  PaymentService, 
-  UpiPaymentRequest, 
-  AutoVerifyRequest 
-} from '../../services/payment.service';
 import { CartService } from '../../services/cart.service';
 import { Subscription } from 'rxjs';
 
@@ -22,7 +17,6 @@ import { Subscription } from 'rxjs';
 })
 export class PaymentComponent implements OnInit, OnDestroy {
   // Order details
-  orderId: number = 0;
   orderNumber: string = '';
   paymentAmount: number = 0;
   transactionId: string = '';
@@ -34,33 +28,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private timerInterval: any;
   
   // Payment status
-  paymentStatus: 'pending' | 'processing' | 'confirmed' | 'failed' = 'pending';
+  paymentStatus: 'pending' | 'confirmed' | 'failed' = 'pending';
   
   // Order data
-  orderData: any = {
-    cartItems: [],
-    option: '',
-    customerName: '',
-    customerPhone: '',
-    restaurantPhone: '',
-    total: 0,
-    subtotal: 0,
-    gst: 0,
-    discount: 0,
-    coupon: null,
-    formValues: {}
-  };
-  
-  // UPI payment string for QR code
-  upiPaymentString: string = '';
+  orderData: any = null;
   
   // QR Code image URL
   qrCodeImageUrl: string = '';
-  
-  // Auto verification
-  private autoVerifySubscription?: Subscription;
-  isAutoVerifying: boolean = false;
-  verificationAttempts: number = 0;
   
   // Customer phone
   customerPhone: string = '';
@@ -69,24 +43,17 @@ export class PaymentComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private cartService: CartService,
-    private paymentService: PaymentService
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
     console.log('PaymentComponent initialized');
     this.initializePayment();
     this.startTimer();
-    this.startAutoVerification();
   }
 
   ngOnDestroy(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
-    if (this.autoVerifySubscription) {
-      this.autoVerifySubscription.unsubscribe();
-    }
+    this.stopTimer();
   }
 
   private initializePayment(): void {
@@ -95,70 +62,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
     // Set UPI from environment
     this.restaurantUPI = environment.restaurantUPI || '9402613361@ptaxis';
     
-    // 1. Try to get from localStorage
-    const savedOrder = localStorage.getItem('currentOrder');
-    if (savedOrder) {
-      try {
-        const order = JSON.parse(savedOrder);
-        this.orderData = { ...this.orderData, ...order };
-        
-        // Extract critical data
-        this.paymentAmount = order.total || order.finalTotal || 0;
-        this.orderNumber = order.orderId || this.generateOrderId();
-        this.orderId = order.id || this.extractOrderNumber(this.orderNumber);
-        this.customerPhone = order.customerPhone || order.formValues?.phone || '';
-        
-        console.log('Loaded from localStorage:', {
-          amount: this.paymentAmount,
-          orderNumber: this.orderNumber,
-          orderId: this.orderId,
-          orderData: this.orderData
-        });
-      } catch (e) {
-        console.error('Error parsing localStorage order:', e);
-      }
-    }
-    localStorage.setItem('currentOrder', JSON.stringify(savedOrder));
-    // 2. Try route params
-    this.route.params.subscribe(params => {
-      if (params['amount']) {
-        this.paymentAmount = +params['amount'];
-      }
-      if (params['id']) {
-        const id = params['id'];
-        this.orderId = parseInt(id, 10) || 0;
-        if (!this.orderNumber) {
-          this.orderNumber = 'ORD' + id;
-        }
-      }
-    });
+    // Get order data
+    this.loadOrderData();
     
-    // 3. Try router state
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      const stateData = navigation.extras.state as any;
-      if (stateData.orderData) {
-        this.orderData = { ...this.orderData, ...stateData.orderData };
-        
-        if (stateData.orderData.total > 0) {
-          this.paymentAmount = stateData.orderData.total;
-        }
-        if (stateData.orderData.orderId) {
-          this.orderNumber = stateData.orderData.orderId;
-        }
-        if (stateData.orderData.id) {
-          this.orderId = stateData.orderData.id;
-        }
-      }
-    }
-    
-    // 4. Get from cart service as last resort
-    if (!this.paymentAmount || this.paymentAmount <= 0) {
-      const cartTotal = this.cartService.getTotalPrice();
-      if (cartTotal > 0) {
-        this.paymentAmount = cartTotal;
-      }
-    }
+    // Set payment details
+    this.setPaymentDetails();
     
     // Validate payment amount
     if (!this.paymentAmount || this.paymentAmount <= 0) {
@@ -167,80 +75,104 @@ export class PaymentComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Generate order number if not set
-    if (!this.orderNumber || this.orderNumber === '') {
-      this.orderNumber = this.generateOrderId();
-    }
-    
-    // Generate UPI payment string
-    this.generateUpiPaymentString();
-    
     // Generate QR code image
     this.generateQRCodeImage();
   }
 
-  private startAutoVerification(): void {
-    if (!this.orderNumber || this.paymentAmount <= 0) {
+  private loadOrderData(): void {
+    // Try to get from router state first
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state as any;
+    
+    if (state?.orderData) {
+      this.orderData = state.orderData;
+      console.log('Loaded order data from router state');
+      this.saveOrderToLocalStorage();
+    } else {
+      // Fallback to localStorage
+      this.loadOrderFromLocalStorage();
+    }
+  }
+
+  private loadOrderFromLocalStorage(): void {
+    try {
+      const savedOrder = localStorage.getItem('currentOrder');
+      if (savedOrder) {
+        this.orderData = JSON.parse(savedOrder);
+        console.log('Loaded order data from localStorage');
+      }
+    } catch (e) {
+      console.error('Error loading order from localStorage:', e);
+    }
+  }
+
+  private saveOrderToLocalStorage(): void {
+    if (this.orderData) {
+      try {
+        localStorage.setItem('currentOrder', JSON.stringify(this.orderData));
+      } catch (e) {
+        console.error('Error saving order to localStorage:', e);
+      }
+    }
+  }
+
+  private setPaymentDetails(): void {
+    if (!this.orderData) {
+      console.error('No order data found');
+      // Fallback to cart service
+      const cartTotal = this.cartService.getTotalPrice();
+      if (cartTotal > 0) {
+        this.paymentAmount = cartTotal;
+        this.orderNumber = this.generateOrderId();
+        console.log('Using cart total as fallback:', this.paymentAmount);
+      }
       return;
     }
 
-    this.isAutoVerifying = true;
+    // Extract payment amount
+    this.paymentAmount = this.orderData.total || this.orderData.finalTotal || 0;
     
-    this.autoVerifySubscription = this.paymentService.startAutoVerification(
-      this.orderNumber,
-      this.paymentAmount,
-      this.customerPhone
-    ).subscribe({
-      next: (response) => {
-        this.verificationAttempts++;
-        
-        if (response.success && response.isPaid) {
-          // Payment verified automatically!
-          this.handleAutoPaymentSuccess(response.data);
-        } else if (this.verificationAttempts % 3 === 0) {
-          // Show status update every 3 attempts
-          console.log(`Auto-verification attempt ${this.verificationAttempts}: ${response.message}`);
-        }
-      },
-      error: (error) => {
-        console.error('Auto-verification error:', error);
-      },
-      complete: () => {
-        this.isAutoVerifying = false;
-        if (this.paymentStatus === 'pending') {
-          console.log('Auto-verification completed without payment detection');
-        }
-      }
+    // Extract order number
+    this.orderNumber = this.orderData.orderId || this.generateOrderId();
+    
+    // Extract customer phone
+    this.customerPhone = this.orderData.customerPhone || 
+                        this.orderData.formValues?.phone || 
+                        '';
+    
+    console.log('Payment details set:', {
+      amount: this.paymentAmount,
+      orderNumber: this.orderNumber
     });
-  }
-
-  private generateUpiPaymentString(): void {
-    if (!this.paymentAmount || this.paymentAmount <= 0) return;
-    
-    const amount = Math.round(this.paymentAmount);
-    const cleanOrderNumber = this.orderNumber.replace(/[^a-zA-Z0-9]/g, '-');
-    
-    const params = new URLSearchParams({
-      pa: this.restaurantUPI,
-      pn: 'Maya Korean Restaurant',
-      am: amount.toString(),
-      tn: `Order ${cleanOrderNumber}`,
-      cu: 'INR'
-    });
-    
-    this.upiPaymentString = `upi://pay?${params.toString()}`;
   }
 
   private generateQRCodeImage(): void {
-    if (this.upiPaymentString) {
-      try {
-        const encodedData = encodeURIComponent(this.upiPaymentString);
-        this.qrCodeImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodedData}&format=png&margin=1&color=dc2626&bgcolor=ffffff`;
-      } catch (error) {
-        console.error('Error generating QR code:', error);
-        this.qrCodeImageUrl = '';
-      }
+    if (!this.paymentAmount || this.paymentAmount <= 0) return;
+    
+    try {
+      // Create UPI payment string
+      const amount = Math.round(this.paymentAmount);
+      const cleanOrderNumber = this.orderNumber.replace(/[^a-zA-Z0-9]/g, '-');
+      
+      const upiString = `upi://pay?pa=${this.restaurantUPI}&pn=Maya%20Korean%20Restaurant&am=${amount}&tn=Order%20${cleanOrderNumber}&cu=INR`;
+      const encodedData = encodeURIComponent(upiString);
+      
+      // Generate QR code using QuickChart (more reliable)
+      this.qrCodeImageUrl = `https://quickchart.io/qr?text=${encodedData}&size=250&margin=1&dark=dc2626&light=ffffff`;
+      
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      this.qrCodeImageUrl = '';
     }
+  }
+
+  // Retry QR code if it fails
+  retryQRCode(): void {
+    console.log('Retrying QR code generation...');
+    this.qrCodeImageUrl = ''; // Clear first
+    setTimeout(() => {
+      this.generateQRCodeImage();
+    }, 500);
   }
 
   private startTimer(): void {
@@ -252,102 +184,107 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.seconds = 59;
       } else {
         // Timer expired
-        clearInterval(this.timerInterval);
         this.paymentStatus = 'failed';
         this.handlePaymentTimeout();
       }
     }, 1000);
   }
 
-  // Format time as MM:SS
-  formatTime(min: number, sec: number): string {
-    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  }
-
-  // Stop timer when payment is successful
   private stopTimer(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
-    if (this.autoVerifySubscription) {
-      this.autoVerifySubscription.unsubscribe();
-    }
   }
 
-  // Handle automatic payment success
-  private handleAutoPaymentSuccess(paymentData: any): void {
-    this.stopTimer();
-    
-    // Set transaction ID from auto-verification
-    if (paymentData?.transactionId) {
-      this.transactionId = paymentData.transactionId;
-    } else {
-      this.transactionId = `AUTO${Date.now()}`;
+  // SINGLE BUTTON: Confirm Payment & Send Order
+  confirmPaymentAndSendOrder(): void {
+    if (!this.validateTransactionId()) {
+      return;
     }
+
+    // 1. Send WhatsApp with order details and transaction ID
+    this.sendOrderToRestaurantViaWhatsApp();
     
-    this.paymentStatus = 'confirmed';
+    // 2. Mark as confirmed locally
+    this.markPaymentAsConfirmed();
     
-    // Save successful payment
-    const paymentRecord = {
-      orderId: this.orderNumber,
-      transactionId: this.transactionId,
-      amount: this.paymentAmount,
-      timestamp: new Date().toISOString(),
-      status: 'confirmed',
-      orderData: this.orderData,
-      autoVerified: true
-    };
+    // 3. Show success message
+    this.showToast('Order confirmed! Details sent to restaurant via WhatsApp.', 'success');
     
-    localStorage.setItem('payment_' + this.orderNumber, JSON.stringify(paymentRecord));
-    
-    // Clear cart
-    this.cartService.clearCart();
-    localStorage.removeItem('currentOrder');
-    
-    this.showToast('Payment detected automatically! Order confirmed.', 'success');
-    
-    // Navigate to success page after delay
+    // 4. Clear cart and redirect after delay
     setTimeout(() => {
       this.navigateToOrderSummary();
     }, 2000);
   }
 
-  // Manual payment confirmation (keep as fallback)
-  confirmPayment(): void {
-    if (!this.validateTransactionId()) {
+  // WhatsApp order confirmation with transaction ID
+  private sendOrderToRestaurantViaWhatsApp(): void {
+    if (!this.orderData || !this.orderData.cartItems) {
+      console.error('No order data for WhatsApp');
       return;
     }
-
-    this.paymentStatus = 'processing';
     
-    const paymentRequest: UpiPaymentRequest = {
-      orderNumber: this.orderNumber,
-      transactionId: this.transactionId,
-      amount: this.paymentAmount,
-      upiId: this.restaurantUPI,
-      customerPhone: this.customerPhone,
-      orderDetails: this.orderData
-    };
+    try {
+      // Format order items
+      let itemsText = '';
+      let totalItems = 0;
+      
+      this.orderData.cartItems.forEach((item: any, index: number) => {
+        itemsText += `${index + 1}. ${item.name} x ${item.quantity} = ₹${(item.price * item.quantity).toFixed(0)}\n`;
+        totalItems += item.quantity;
+      });
+      
+      // Calculate totals
+      const subtotal = this.orderData.subtotal || this.paymentAmount;
+      const gst = this.orderData.gst || 0;
+      const discount = this.orderData.discount || 0;
+      const finalTotal = this.paymentAmount;
+      
+      // Create message - SIMPLE AND CLEAR
+      const message = `🆕 *NEW ORDER* 🆕
 
-    this.paymentService.processUpiPayment(paymentRequest).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.handleManualPaymentSuccess();
-        } else {
-          this.handlePaymentError(response.message || 'Payment verification failed');
-        }
-      },
-      error: (error) => {
-        console.error('Payment processing error:', error);
-        this.handlePaymentError('Unable to verify payment. Please try again or contact support.');
-      }
-    });
+📋 *Order #${this.orderNumber}*
+🔢 *TXN ID: ${this.transactionId}*
+💰 *Amount: ₹${finalTotal}*
+
+👤 *Customer:*
+• Name: ${this.orderData.formValues?.name || 'Not provided'}
+• Phone: ${this.customerPhone || 'Not provided'}
+${this.orderData.formValues?.address ? `• Address: ${this.orderData.formValues.address}` : ''}
+
+📦 *Order Items (${this.orderData.cartItems.length} items, ${totalItems} qty):*
+${itemsText}
+
+🧾 *Bill Summary:*
+• Subtotal: ₹${subtotal}
+• GST: ₹${gst}
+• Discount: ₹${discount}
+• *Total: ₹${finalTotal}*
+
+⏰ *Order Time:* ${new Date().toLocaleTimeString('en-IN')}
+📱 *Via:* Website
+
+✅ *To Verify Payment:*
+1. Check your UPI app for transaction
+2. Transaction ID: ${this.transactionId}
+3. Amount: ₹${finalTotal}
+4. If confirmed → Prepare order`;
+
+      // Encode and send
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${environment.supportPhone || '+919402613361'}?text=${encodedMessage}`, '_blank');
+      
+      console.log('Order details sent via WhatsApp');
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+    }
   }
 
-  private handleManualPaymentSuccess(): void {
+  private markPaymentAsConfirmed(): void {
     this.stopTimer();
     this.paymentStatus = 'confirmed';
     
+    // Save payment record
     const paymentRecord = {
       orderId: this.orderNumber,
       transactionId: this.transactionId,
@@ -360,12 +297,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
     localStorage.setItem('payment_' + this.orderNumber, JSON.stringify(paymentRecord));
     this.cartService.clearCart();
     localStorage.removeItem('currentOrder');
-    
-    this.showToast('Payment confirmed! WhatsApp notification sent.', 'success');
-    
-    setTimeout(() => {
-      this.navigateToOrderSummary();
-    }, 2000);
   }
 
   private navigateToOrderSummary(): void {
@@ -375,8 +306,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
       amount: this.paymentAmount,
       timestamp: new Date().toISOString(),
       status: 'confirmed',
-      orderData: this.orderData,
-      autoVerified: this.paymentStatus === 'confirmed' && !this.transactionId.includes('AUTO')
+      orderData: this.orderData
     };
     
     localStorage.setItem('order_summary', JSON.stringify(orderSummary));
@@ -401,12 +331,9 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  private handlePaymentError(errorMessage: string): void {
-    this.paymentStatus = 'pending';
-    this.showToast(`Payment Error: ${errorMessage}`, 'error');
-  }
-
   private handlePaymentTimeout(): void {
+    this.stopTimer();
+    this.paymentStatus = 'failed';
     this.showToast('Payment window expired. Please restart your order.', 'warning');
     
     setTimeout(() => {
@@ -415,13 +342,28 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   private showToast(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info'): void {
-    // Toast implementation remains the same
     console.log(`${type.toUpperCase()}: ${message}`);
-  }
-
-  private extractOrderNumber(orderString: string): number {
-    const matches = orderString.match(/\d+/);
-    return matches ? parseInt(matches[0], 10) : Date.now();
+    
+    // Simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `payment-toast payment-toast-${type}`;
+    toast.innerHTML = `
+      <div class="toast-content">
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                       type === 'error' ? 'fa-exclamation-circle' : 
+                       type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+        <span>${message}</span>
+      </div>
+      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      if (toast.parentNode) {
+        document.body.removeChild(toast);
+      }
+    }, 5000);
   }
 
   private generateOrderId(): string {
@@ -430,12 +372,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
     return `ORD${timestamp}${random}`;
   }
 
-  getCurrentTime(): string {
-    const now = new Date();
-    return now.toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit'
-    }) + ', ' + now.toLocaleDateString('en-IN');
+  formatTime(min: number, sec: number): string {
+    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
   }
 
   // UI Methods
@@ -445,14 +383,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   goToHome(): void {
     this.router.navigate(['/']);
-  }
-
-  openWhatsApp(): void {
-    const supportNumber = environment.supportPhone;
-    const message = encodeURIComponent(
-      `Hi, I need help with payment for Order #${this.orderNumber}`
-    );
-    window.open(`https://wa.me/${supportNumber}?text=${message}`, '_blank');
   }
 
   copyUPIId(): void {
@@ -467,12 +397,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   openUPIApp(): void {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile && this.upiPaymentString) {
-      window.location.href = this.upiPaymentString;
+    if (this.paymentAmount > 0) {
+      const upiLink = `upi://pay?pa=${this.restaurantUPI}&am=${Math.round(this.paymentAmount)}&tn=Order${this.orderNumber}`;
+      window.location.href = upiLink;
     } else {
-      this.showToast('Please scan QR code with UPI app', 'info');
+      this.showToast('Please wait for QR code to load', 'info');
     }
   }
 }

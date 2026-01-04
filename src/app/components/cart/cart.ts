@@ -1,4 +1,4 @@
-// cart.component.ts
+// cart.component.ts - ADD missing method
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -50,9 +50,9 @@ export class CartComponent implements OnInit {
     return this.cartService.getTotalPrice();
   }
 
-  // New method to format price
+  // Updated to handle zero decimals
   formatPrice(price: number): string {
-    return `₹${price.toFixed(2)}`;
+    return `₹${price.toFixed(price % 1 === 0 ? 0 : 2)}`;
   }
 
   proceedToCheckout() {
@@ -67,6 +67,11 @@ export class CartComponent implements OnInit {
     // Navigate to order page using Angular Router
     setTimeout(() => {
       this.router.navigate(['/order']);
-    }, 300); // Small delay for smooth transition
+    }, 300);
+  }
+  
+  // Add a method to check if cart is empty
+  isCartEmpty(): boolean {
+    return this.cartItems.length === 0;
   }
 }

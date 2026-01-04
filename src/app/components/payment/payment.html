@@ -1,105 +1,151 @@
-<!-- payment.html - UPDATED -->
+<!-- payment.html - SIMPLIFIED WITH ONE BUTTON -->
 <section class="payment-section">
   <div class="container">
-    <!-- Auto Verification Status -->
-    <div *ngIf="isAutoVerifying" class="auto-verify-status">
-      <div class="verifying-spinner">
-        <i class="fas fa-sync fa-spin"></i>
+    <!-- Back Button -->
+    <button class="back-btn" (click)="backToOrder()">
+      <i class="fas fa-arrow-left"></i> Back to Order
+    </button>
+
+    <!-- Payment Header -->
+    <div class="payment-header">
+      <h1 class="section-title">Complete Your Payment</h1>
+      <div class="order-badge">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Order Total:</span>
+        <span class="order-amount">₹{{paymentAmount}}</span>
       </div>
-      <p>Automatically checking for payment... (Attempt {{verificationAttempts}})</p>
-      <small>We'll detect your payment automatically. No need to enter transaction ID!</small>
     </div>
 
-    <!-- Payment Timer (Show only when pending) -->
+    <!-- Payment Timer -->
     <div *ngIf="paymentStatus === 'pending'" class="payment-timer-card">
       <i class="fas fa-clock"></i>
       <div class="timer-content">
         <h4>Complete Payment Within</h4>
         <div class="timer">{{formatTime(minutes, seconds)}}</div>
-        <p *ngIf="isAutoVerifying">We're automatically checking for your payment</p>
-        <p *ngIf="!isAutoVerifying">Scan QR code or use UPI ID below</p>
+        <p>Scan QR code or use UPI ID below</p>
       </div>
     </div>
 
-    <!-- Payment Methods -->
-    <div class="payment-methods" *ngIf="paymentStatus === 'pending'">
-      <div class="upi-payment-card">
-        <!-- QR Code Section -->
-        <div class="qr-section">
-          <div class="qr-code-container">
-            <img *ngIf="qrCodeImageUrl" 
-                 [src]="qrCodeImageUrl" 
-                 alt="Scan QR Code to Pay" 
-                 class="qr-img">
-            <div *ngIf="!qrCodeImageUrl" class="qr-placeholder">
-              <i class="fas fa-qrcode fa-4x"></i>
-              <p>Loading QR Code...</p>
-            </div>
+    <!-- Payment Status -->
+    <div class="payment-status" [class]="'payment-status ' + paymentStatus">
+      <div class="status-icon">
+        <i *ngIf="paymentStatus === 'pending'" class="fas fa-hourglass-half"></i>
+        <i *ngIf="paymentStatus === 'confirmed'" class="fas fa-check-circle"></i>
+        <i *ngIf="paymentStatus === 'failed'" class="fas fa-times-circle"></i>
+      </div>
+      <div class="status-text">
+        <h3 *ngIf="paymentStatus === 'pending'">Waiting for Payment</h3>
+        <h3 *ngIf="paymentStatus === 'confirmed'">Order Confirmed!</h3>
+        <h3 *ngIf="paymentStatus === 'failed'">Payment Time Expired</h3>
+        <p *ngIf="paymentStatus === 'pending'">
+          Please complete the payment within {{minutes}}:{{seconds | number:'2.0'}} minutes
+        </p>
+        <p *ngIf="paymentStatus === 'confirmed'">Order details sent to restaurant via WhatsApp</p>
+        <p *ngIf="paymentStatus === 'failed'">Please restart your order</p>
+      </div>
+    </div>
+
+    <!-- QR Code Section -->
+    <div class="qr-code-section" *ngIf="paymentStatus === 'pending'">
+      <h3><i class="fas fa-qrcode"></i> Scan QR Code to Pay</h3>
+      
+      <div class="qr-code-container-large">
+        <img *ngIf="qrCodeImageUrl" 
+             [src]="qrCodeImageUrl" 
+             alt="Scan QR Code to Pay" 
+             class="qr-img-large"
+             (error)="retryQRCode()">
+        
+        <div *ngIf="!qrCodeImageUrl" class="qr-placeholder-large">
+          <div class="qr-loading">
+            <i class="fas fa-spinner fa-spin fa-3x"></i>
+            <p>Generating QR Code...</p>
           </div>
-          <p class="qr-instruction">Scan with any UPI app</p>
-          
-          <button class="scan-btn" (click)="openUPIApp()">
-            <i class="fas fa-external-link-alt"></i> Open UPI App
+          <button class="retry-btn-large" (click)="retryQRCode()">
+            <i class="fas fa-redo"></i> Retry QR Code
           </button>
         </div>
-        
-        <!-- Manual UPI -->
-        <div class="manual-upi">
-          <div class="upi-details-card">
-            <div class="detail-row">
-              <span class="label">UPI ID:</span>
-              <div class="value-group">
-                <span class="value upi-id">{{restaurantUPI}}</span>
-                <button class="copy-btn" (click)="copyUPIId()">
-                  <i class="far fa-copy"></i> Copy
-                </button>
-              </div>
-            </div>
-            <div class="detail-row">
-              <span class="label">Amount:</span>
-              <span class="value amount">₹{{paymentAmount}}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Note/Description:</span>
-              <span class="value note">Order {{orderNumber}} - Maya Korean</span>
-            </div>
+      </div>
+      
+      <p class="qr-instruction-large">
+        <i class="fas fa-info-circle"></i> Open any UPI app and scan this QR code
+      </p>
+      
+      <button class="open-upi-btn" (click)="openUPIApp()">
+        <i class="fas fa-external-link-alt"></i> Open UPI App Directly
+      </button>
+    </div>
+
+    <!-- UPI Details -->
+    <div class="manual-upi-section" *ngIf="paymentStatus === 'pending'">
+      <h3><i class="fas fa-keyboard"></i> Manual Payment Option</h3>
+      
+      <div class="upi-details-simple">
+        <div class="upi-detail">
+          <span class="label">Send to UPI ID:</span>
+          <div class="value-container">
+            <span class="value upi-value">{{restaurantUPI}}</span>
+            <button class="copy-btn-small" (click)="copyUPIId()">
+              <i class="far fa-copy"></i> Copy
+            </button>
           </div>
+        </div>
+        
+        <div class="upi-detail">
+          <span class="label">Amount:</span>
+          <span class="value amount-large">₹{{paymentAmount}}</span>
+        </div>
+        
+        <div class="upi-detail">
+          <span class="label">Note:</span>
+          <span class="value">Order {{orderNumber}}</span>
         </div>
       </div>
     </div>
 
-    <!-- Manual Fallback (Optional) -->
-    <div class="manual-fallback" *ngIf="paymentStatus === 'pending'">
-      <h4><i class="fas fa-keyboard"></i> Having issues?</h4>
-      <div class="transaction-input">
-        <label>Enter Transaction ID (Optional):</label>
+    <!-- SINGLE BUTTON SECTION -->
+    <div class="single-button-section" *ngIf="paymentStatus === 'pending'">
+      <h4><i class="fas fa-receipt"></i> Enter Transaction ID & Confirm</h4>
+      
+      <div class="transaction-input-container">
         <input 
           type="text" 
           [(ngModel)]="transactionId"
-          placeholder="If auto-detection fails, enter transaction ID here"
-          maxlength="50"
+          placeholder="Enter UPI Transaction ID"
+          class="transaction-input-field"
         />
-        <button class="manual-confirm-btn" (click)="confirmPayment()" [disabled]="!transactionId">
-          <i class="fas fa-paper-plane"></i> Manually Confirm
-        </button>
+        <p class="transaction-help">
+          <i class="fas fa-info-circle"></i> Find this in your UPI app after payment
+        </p>
+      </div>
+      
+      <!-- SINGLE BUTTON - Does Both Actions -->
+      <button class="single-confirm-btn" (click)="confirmPaymentAndSendOrder()" [disabled]="!transactionId">
+        <i class="fab fa-whatsapp"></i> Confirm Payment & Send Order to WhatsApp
+      </button>
+      
+      <div class="single-button-note">
+        <i class="fas fa-lightbulb"></i>
+        <span>This will send your order details <strong>AND</strong> transaction ID to the restaurant via WhatsApp</span>
       </div>
     </div>
 
-    <!-- Payment Success -->
+    <!-- Success Screen -->
     <div *ngIf="paymentStatus === 'confirmed'" class="success-container">
       <div class="success-card">
         <div class="success-icon">
           <i class="fas fa-check-circle"></i>
         </div>
-        <h2>Payment Confirmed Automatically!</h2>
+        <h2>✅ Order Confirmed!</h2>
         <p class="order-id">Order #: <strong>{{orderNumber}}</strong></p>
-        <p class="success-message">
-          Your payment of <strong>₹{{paymentAmount}}</strong> has been detected automatically.
-          WhatsApp notifications have been sent to the restaurant.
-        </p>
+        <div class="success-message">
+          <p>Your order has been confirmed successfully!</p>
+          <p>Order details sent to restaurant via WhatsApp.</p>
+          <p>Transaction ID: <strong>{{transactionId}}</strong></p>
+        </div>
         
         <div class="redirect-message">
-          <p>Redirecting to order summary...</p>
+          <p><i class="fas fa-spinner fa-spin"></i> Redirecting to order summary...</p>
         </div>
       </div>
     </div>

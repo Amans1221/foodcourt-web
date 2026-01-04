@@ -216,7 +216,7 @@ export class OrderComponent implements OnInit {
     return this.finalTotal;
   }
 
-  submitOrder(form: NgForm) {
+ submitOrder(form: NgForm) {
     if (form.valid && this.selectedOptionId) {
       // Check if cart still has items
       if (this.cartCount === 0) {
@@ -237,13 +237,19 @@ export class OrderComponent implements OnInit {
         coupon: this.appliedCoupon,
         paymentMethod: this.paymentMethod,
         timestamp: new Date().toISOString(),
-        status: 'pending'
+        status: 'pending',
+        // Add customer details
+        customerName: form.value.name || '',
+        customerPhone: form.value.phone || '',
+        customerEmail: form.value.email || '',
+        deliveryAddress: form.value.address || ''
       };
 
       console.log('Order Data:', orderData);
       
-      // Save order data to localStorage
+      // Save order data to localStorage with multiple keys for redundancy
       localStorage.setItem('currentOrder', JSON.stringify(orderData));
+      localStorage.setItem(`order_${orderData.orderId}`, JSON.stringify(orderData));
       
       // Show confirmation based on payment method
       if (this.paymentMethod === 'cash') {
@@ -256,11 +262,8 @@ export class OrderComponent implements OnInit {
         // Navigate to home or order confirmation
         this.router.navigate(['/']);
       } else {
-        // For online payment, navigate to payment page
-        this.router.navigate(['/payment', { 
-          id: Date.now(),
-          amount: orderData.total
-        }], { 
+        // For online payment, navigate to payment page WITHOUT amount in URL
+        this.router.navigate(['/payment'], { 
           state: { orderData: orderData } 
         });
       }

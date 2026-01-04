@@ -1,3 +1,4 @@
+// app-routing.module.ts - UPDATE
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home';
 import { MenuComponent } from './components/menu/menu';
@@ -14,6 +15,6 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'cart', component: CartComponent },
-  { path: 'payment', component: PaymentComponent },
+  { path: 'payment', component: PaymentComponent }, // Remove :id and :amount from route
   { path: '**', redirectTo: '' }
 ];
