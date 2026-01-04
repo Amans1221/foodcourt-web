@@ -1,4 +1,3 @@
-// order.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -44,7 +43,7 @@ export class OrderComponent implements OnInit {
   selectedOptionTitle = '';
   cartTotal: number = 0;
   cartCount: number = 0;
-  paymentMethod: string = 'cash'; // Default to cash on delivery
+  paymentMethod: string = 'cash';
 
   // Coupon properties
   couponCode: string = '';
@@ -54,6 +53,14 @@ export class OrderComponent implements OnInit {
   couponSuccess: string = '';
   discountAmount: number = 0;
   finalTotal: number = 0;
+  
+  // WhatsApp properties
+  isSendingWhatsApp: boolean = false;
+  
+  // Toast properties
+  showToast: boolean = false;
+  toastMessage: string = '';
+  toastType: 'success' | 'error' | 'warning' | 'info' = 'info';
   
   // Available coupons
   availableCoupons = [
@@ -87,6 +94,10 @@ export class OrderComponent implements OnInit {
     }
   ];
 
+  // Restaurant WhatsApp number
+  restaurantWhatsAppNumber = '+918826823830';
+  restaurantName = "Maya's Korean Kitchen";
+
   constructor(
     private router: Router,
     public cartService: CartService
@@ -95,7 +106,6 @@ export class OrderComponent implements OnInit {
   ngOnInit() {
     this.updateCartSummary();
     
-    // Subscribe to cart changes
     this.cartService.cartItems$.subscribe(() => {
       this.updateCartSummary();
     });
@@ -106,7 +116,6 @@ export class OrderComponent implements OnInit {
     this.cartTotal = this.cartService.getTotalPrice();
     this.calculateFinalTotal();
     
-    // Redirect to menu if cart is empty
     if (this.cartCount === 0) {
       setTimeout(() => {
         this.router.navigate(['/menu']);
@@ -114,15 +123,32 @@ export class OrderComponent implements OnInit {
     }
   }
 
+  // Toast notification methods
+  showNotification(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration: number = 4000) {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    
+    setTimeout(() => {
+      this.showToast = false;
+    }, duration);
+  }
+
+  closeToast() {
+    this.showToast = false;
+  }
+
   selectOption(optionId: number) {
     this.selectedOptionId = optionId;
     const option = this.options.find(o => o.id === optionId);
     this.selectedOptionTitle = option ? option.title : '';
+    this.showNotification(`Selected: ${this.selectedOptionTitle}`, 'success', 2000);
   }
 
   cancelSelection() {
     this.selectedOptionId = null;
     this.selectedOptionTitle = '';
+    this.showNotification('Selection cancelled. Choose another option.', 'info');
   }
 
   formatPrice(price: number): string {
@@ -139,7 +165,7 @@ export class OrderComponent implements OnInit {
     this.couponSuccess = '';
     
     if (!this.couponCode || this.couponCode.trim().length < 3) {
-      this.couponError = 'Please enter a valid coupon code';
+      this.showNotification('Please enter a valid coupon code', 'warning');
       return;
     }
     
@@ -148,39 +174,45 @@ export class OrderComponent implements OnInit {
     );
     
     if (!coupon) {
-      this.couponError = 'Invalid coupon code';
+      this.showNotification('Invalid coupon code', 'error');
       return;
     }
     
-    // Check minimum order requirement
     if (this.cartTotal < coupon.minOrder) {
-      this.couponError = `Minimum order of ₹${coupon.minOrder} required for this coupon`;
+      this.showNotification(`Minimum order of ₹${coupon.minOrder} required for this coupon`, 'warning');
       return;
     }
     
-    // Check if coupon already applied
     if (this.couponApplied && this.appliedCoupon?.code === coupon.code) {
-      this.couponError = 'This coupon is already applied';
+      this.showNotification('This coupon is already applied', 'info');
       return;
     }
     
-    // Apply coupon
     this.appliedCoupon = coupon;
     this.couponApplied = true;
-    this.couponSuccess = `Coupon "${coupon.code}" applied successfully!`;
     this.calculateFinalTotal();
     
-    // Clear the input field
+    // Show toast instead of inline message
+    const discountText = coupon.discountType === 'percentage' 
+      ? `${coupon.discountValue}% off` 
+      : `₹${coupon.discountValue} off`;
+    this.showNotification(`🎉 Coupon "${coupon.code}" applied! ${discountText}`, 'success');
+    
     this.couponCode = '';
   }
 
   removeCoupon() {
+    const removedCode = this.appliedCoupon?.code;
     this.couponApplied = false;
     this.appliedCoupon = null;
     this.couponCode = '';
     this.couponError = '';
     this.couponSuccess = '';
     this.calculateFinalTotal();
+    
+    if (removedCode) {
+      this.showNotification(`Coupon "${removedCode}" removed`, 'info');
+    }
   }
 
   calculateFinalTotal() {
@@ -200,7 +232,6 @@ export class OrderComponent implements OnInit {
           this.discountAmount = 0;
       }
       
-      // Ensure discount doesn't exceed total
       this.discountAmount = Math.min(this.discountAmount, totalBeforeDiscount);
       this.finalTotal = totalBeforeDiscount - this.discountAmount;
     } else {
@@ -208,7 +239,6 @@ export class OrderComponent implements OnInit {
       this.finalTotal = totalBeforeDiscount;
     }
     
-    // Round to nearest integer
     this.finalTotal = Math.round(this.finalTotal);
   }
 
@@ -216,20 +246,112 @@ export class OrderComponent implements OnInit {
     return this.finalTotal;
   }
 
- submitOrder(form: NgForm) {
+  // WhatsApp message formatting
+  formatOrderForWhatsApp(orderData: any): string {
+    const cartItems = this.cartService.getCartItems();
+    
+    let message = `🍱 *NEW ORDER - ${orderData.orderId}* 🍱\n\n`;
+    message += `👤 *Customer Details:*\n`;
+    message += `Name: ${orderData.customerName}\n`;
+    message += `Phone: ${orderData.customerPhone}\n`;
+    
+    if (orderData.deliveryAddress) {
+      message += `📍 *Delivery Address:*\n${orderData.deliveryAddress}\n\n`;
+    } else if (this.selectedOptionId === 2) {
+      message += `📌 *Pickup Order*\n\n`;
+    } else if (this.selectedOptionId === 3) {
+      message += `🍽️ *Dine-in Reservation*\n`;
+      message += `Date: ${orderData.formValues.reservationDate || 'N/A'}\n`;
+      message += `Time: ${orderData.formValues.reservationTime || 'N/A'}\n`;
+      message += `Guests: ${orderData.formValues.guests || 'N/A'}\n\n`;
+    }
+    
+    message += `📋 *Order Items:*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    
+    cartItems.forEach((item: any, index: number) => {
+      const itemTotal = item.price * item.quantity;
+      message += `${index + 1}. ${item.name} x${item.quantity}\n`;
+      message += `   ₹${item.price} × ${item.quantity} = ₹${itemTotal}\n`;
+      if (item.customizations && item.customizations.length > 0) {
+        message += `   ➕ Add-ons: ${item.customizations.join(', ')}\n`;
+      }
+      message += '\n';
+    });
+    
+    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `💰 *Order Summary:*\n`;
+    message += `Subtotal (${this.cartCount} items): ₹${this.cartTotal}\n`;
+    message += `GST (5%): ₹${Math.round(this.cartTotal * 0.05)}\n`;
+    
+    if (this.couponApplied) {
+      message += `Discount (${this.appliedCoupon?.code}): -₹${this.discountAmount}\n`;
+    }
+    
+    message += `*Total Amount: ₹${this.getFinalTotal()}*\n\n`;
+    message += `💵 *Payment Method:* Cash on Delivery\n`;
+    
+    if (orderData.formValues.instructions) {
+      message += `📝 *Special Instructions:*\n${orderData.formValues.instructions}\n\n`;
+    }
+    
+    message += `⏰ *Estimated Time:* ${orderData.formValues.pickupTime || 
+      (this.selectedOptionId === 1 ? '30-45 mins' : 
+       this.selectedOptionId === 2 ? '15-20 mins' : 'Reservation')}\n\n`;
+    
+    message += `📱 *Order Source:* Website Order\n`;
+    message += `🕒 *Order Time:* ${new Date().toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata'
+    })}\n`;
+    
+    return encodeURIComponent(message);
+  }
+
+  // Send order to WhatsApp
+  sendOrderToWhatsApp(orderData: any) {
+    this.isSendingWhatsApp = true;
+    
+    try {
+      const message = this.formatOrderForWhatsApp(orderData);
+      const whatsappUrl = `https://wa.me/${this.restaurantWhatsAppNumber}?text=${message}`;
+      
+      // Open WhatsApp in new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Show success toast
+      this.showNotification(
+        `📱 Order #${orderData.orderId} sent to ${this.restaurantName} via WhatsApp!`,
+        'success',
+        5000
+      );
+      
+      this.isSendingWhatsApp = false;
+      
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+      this.showNotification('Failed to send WhatsApp message. Please save order information.', 'error');
+      this.isSendingWhatsApp = false;
+    }
+  }
+
+  // Updated submitOrder function with toast notifications
+  async submitOrder(form: NgForm) {
     if (form.valid && this.selectedOptionId) {
       // Check if cart still has items
       if (this.cartCount === 0) {
-        alert('Your cart is empty! Please add items from the menu.');
-        this.router.navigate(['/menu']);
+        this.showNotification('Your cart is empty! Please add items from the menu.', 'warning');
+        setTimeout(() => {
+          this.router.navigate(['/menu']);
+        }, 2000);
         return;
       }
 
+      const orderId = this.generateOrderId();
       const orderData = {
         option: this.selectedOptionTitle,
         formValues: form.value,
         cartItems: this.cartService.getCartItems(),
-        orderId: this.generateOrderId(),
+        orderId: orderId,
         subtotal: this.cartTotal,
         gst: this.cartTotal * 0.05,
         discount: this.discountAmount,
@@ -238,37 +360,77 @@ export class OrderComponent implements OnInit {
         paymentMethod: this.paymentMethod,
         timestamp: new Date().toISOString(),
         status: 'pending',
-        // Add customer details
         customerName: form.value.name || '',
         customerPhone: form.value.phone || '',
         customerEmail: form.value.email || '',
         deliveryAddress: form.value.address || ''
       };
 
-      console.log('Order Data:', orderData);
-      
-      // Save order data to localStorage with multiple keys for redundancy
+      // Save order data
       localStorage.setItem('currentOrder', JSON.stringify(orderData));
-      localStorage.setItem(`order_${orderData.orderId}`, JSON.stringify(orderData));
+      localStorage.setItem(`order_${orderId}`, JSON.stringify(orderData));
       
-      // Show confirmation based on payment method
+      // Show order processing toast
+      this.showNotification(
+        `🔄 Processing Order #${orderId}...`,
+        'info',
+        3000
+      );
+
+      // Handle based on payment method
       if (this.paymentMethod === 'cash') {
-        // For cash on delivery, show confirmation and clear cart
-        alert(`✅ Order placed successfully!\nOrder ID: ${orderData.orderId}\nPayment: Cash on Delivery\nTotal: ${this.formatPrice(this.getFinalTotal())}\n\nOur delivery partner will contact you soon.`);
-        
+        // Show WhatsApp sending toast
+        setTimeout(() => {
+          this.showNotification(
+            `📤 Sending order details to ${this.restaurantName} via WhatsApp...`,
+            'info',
+            2000
+          );
+        }, 500);
+
+        // Send order to WhatsApp
+        setTimeout(() => {
+          this.sendOrderToWhatsApp(orderData);
+        }, 1000);
+
         // Clear cart after successful order
-        this.cartService.clearCart();
+        setTimeout(() => {
+          this.cartService.clearCart();
+          
+          // Show final success toast
+          this.showNotification(
+            `✅ Order #${orderId} Placed Successfully!`,
+            'success',
+            5000
+          );
+          
+          // Navigate to confirmation page
+          setTimeout(() => {
+            this.router.navigate(['/order-confirmation'], { 
+              state: { 
+                orderId: orderId,
+                orderType: this.selectedOptionTitle,
+                total: this.getFinalTotal(),
+                paymentMethod: 'Cash on Delivery',
+                customerPhone: form.value.phone
+              } 
+            });
+          }, 2000);
+          
+        }, 2000);
         
-        // Navigate to home or order confirmation
-        this.router.navigate(['/']);
       } else {
-        // For online payment, navigate to payment page WITHOUT amount in URL
-        this.router.navigate(['/payment'], { 
-          state: { orderData: orderData } 
-        });
+        // For online payment
+        this.showNotification('Redirecting to secure payment gateway...', 'info', 2000);
+        
+        setTimeout(() => {
+          this.router.navigate(['/payment'], { 
+            state: { orderData: orderData } 
+          });
+        }, 1500);
       }
     } else {
-      alert('Please fill all required fields and select an order option.');
+      this.showNotification('Please fill all required fields and select an order option.', 'error');
     }
   }
 

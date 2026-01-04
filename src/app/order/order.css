@@ -1159,3 +1159,151 @@
     right: 10px;
   }
 }
+/* Toast Notifications */
+.order-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.order-toast {
+  min-width: 320px;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-left: 4px solid #3b82f6;
+}
+
+.order-toast-success {
+  border-left-color: #10b981;
+  background: linear-gradient(to right, #f0fdf4, white);
+}
+
+.order-toast-error {
+  border-left-color: #ef4444;
+  background: linear-gradient(to right, #fef2f2, white);
+}
+
+.order-toast-warning {
+  border-left-color: #f59e0b;
+  background: linear-gradient(to right, #fef3c7, white);
+}
+
+.order-toast-info {
+  border-left-color: #3b82f6;
+  background: linear-gradient(to right, #eff6ff, white);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.toast-content i {
+  font-size: 20px;
+}
+
+.order-toast-success .toast-content i { color: #10b981; }
+.order-toast-error .toast-content i { color: #ef4444; }
+.order-toast-warning .toast-content i { color: #f59e0b; }
+.order-toast-info .toast-content i { color: #3b82f6; }
+
+.toast-content span {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Update form validation styles */
+.form-group input:invalid, 
+.form-group textarea:invalid,
+.form-group select:invalid {
+  border-color: #fca5a5;
+}
+
+.form-group input:valid, 
+.form-group textarea:valid,
+.form-group select:valid {
+  border-color: #86efac;
+}
+
+/* Loading state for WhatsApp sending */
+.whatsapp-loading {
+  position: relative;
+}
+
+.whatsapp-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+/* Success animation for order placement */
+@keyframes orderSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.order-success-animation {
+  animation: orderSuccess 0.5s ease-in-out;
+}
+
+/* Responsive toast */
+@media (max-width: 768px) {
+  .order-toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+  
+  .order-toast {
+    min-width: unset;
+    width: 100%;
+    max-width: 100%;
+  }
+}

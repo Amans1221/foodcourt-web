@@ -338,3 +338,15 @@
     </div>
   </div>
 </section>
+<!-- Add toast at the end of the section -->
+<div class="order-toast-container" *ngIf="showToast">
+  <div class="order-toast order-toast-{{toastType}}">
+    <div class="toast-content">
+      <i class="fas" [class]="toastType === 'success' ? 'fa-check-circle' : 'fa-info-circle'"></i>
+      <span>{{toastMessage}}</span>
+    </div>
+    <button class="toast-close" (click)="closeToast()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>
