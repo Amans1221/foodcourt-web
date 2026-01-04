@@ -6,15 +6,13 @@
   background: linear-gradient(135deg, #fff9f9 0%, #fff0f0 100%);
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
-  background: 
-    linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)),
-    url('/assets/logo.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/logo.jpeg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
 }
 
 .container {
