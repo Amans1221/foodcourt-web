@@ -1,4 +1,4 @@
-<div class="contact-container ">
+<div class="contact-container">
   <!-- Hero Section -->
   <section class="contact-hero">
     <div class="hero-content">
@@ -6,6 +6,15 @@
       <p>We'd love to hear from you! Get in touch with any questions, feedback, or reservation inquiries.</p>
     </div>
   </section>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="showSuccess" class="message-success">
+    ✅ Thank you! Your message has been sent successfully. We'll contact you soon.
+  </div>
+
+  <div *ngIf="showError" class="message-error">
+    ❌ Please fill in all required fields marked with *
+  </div>
 
   <!-- Main Content -->
   <div class="contact-main">
@@ -20,38 +29,38 @@
               type="text" 
               id="name" 
               name="name" 
-              [(ngModel)]="contactForm.name" 
+              [(ngModel)]="contactFormData.name" 
               required
               placeholder="Your full name">
           </div>
           <div class="form-group">
-            <label for="email">Email Address *</label>
+            <label for="email">Email Address</label>
             <input 
               type="email" 
               id="email" 
               name="email" 
-              [(ngModel)]="contactForm.email" 
-              required
+              [(ngModel)]="contactFormData.email"
               placeholder="your.email@example.com">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="phone">Phone Number</label>
+            <label for="phone">Phone Number *</label>
             <input 
               type="tel" 
               id="phone" 
               name="phone" 
-              [(ngModel)]="contactForm.phone"
-              placeholder="(555) 123-4567">
+              [(ngModel)]="contactFormData.phone"
+              required
+              placeholder="+91 88268 23830">
           </div>
           <div class="form-group">
             <label for="subject">Subject *</label>
             <select 
               id="subject" 
               name="subject" 
-              [(ngModel)]="contactForm.subject" 
+              [(ngModel)]="contactFormData.subject" 
               required>
               <option value="">Select a subject</option>
               <option value="reservation">Reservation Inquiry</option>
@@ -68,38 +77,46 @@
           <textarea 
             id="message" 
             name="message" 
-            [(ngModel)]="contactForm.message" 
+            [(ngModel)]="contactFormData.message" 
             required
             rows="6"
             placeholder="Please type your message here..."></textarea>
         </div>
 
         <div class="form-group">
-          <label>Preferred Contact Method</label>
+          <label>How would you like us to respond? *</label>
           <div class="radio-group">
             <label class="radio-option">
               <input 
                 type="radio" 
                 name="preferredContact" 
-                value="email" 
-                [(ngModel)]="contactForm.preferredContact">
-              Email
+                value="whatsapp" 
+                [(ngModel)]="contactFormData.preferredContact"
+                required>
+              WhatsApp
             </label>
             <label class="radio-option">
               <input 
                 type="radio" 
                 name="preferredContact" 
-                value="phone" 
-                [(ngModel)]="contactForm.preferredContact">
-              Phone
+                value="email" 
+                [(ngModel)]="contactFormData.preferredContact">
+              Email
             </label>
+            <!-- <label class="radio-option">
+              <input 
+                type="radio" 
+                name="preferredContact" 
+                value="phone" 
+                [(ngModel)]="contactFormData.preferredContact">
+              Phone Call
+            </label> -->
           </div>
         </div>
 
         <button 
           type="submit" 
-          class="btn btn-primary submit-btn"
-          [disabled]="!contactForm.form.valid">
+          class="btn btn-primary submit-btn">
           Send Message
         </button>
       </form>

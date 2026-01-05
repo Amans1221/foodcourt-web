@@ -23,20 +23,28 @@ export class FooterComponent {
   ];
 
   menuCategories = [
-    { label: 'Appetizers' },
-    { label: 'Main Dishes' },
-    { label: 'Soups & Stews' },
-    { label: 'Noodles & Rice' },
-    { label: 'Desserts' }
+    { label: 'Starters & Snacks' },
+    { label: 'Korean Laphing' },
+    { label: 'Rice / Pancakes' },
+    { label: 'Kimbap (Korean Sushi)' },
+    { label: 'Thukpa' },
+    { label: 'Jjigae' },
+    { label: 'Bibimbap' },
+    { label: 'Maya Special' },
+    { label: 'Curries & Noodles' },
+    { label: 'Korean Ramen' },
+    { label: 'Beverages' },
+    { label: 'Mandu (Korean Momos)' },
+    { label: 'Combo Offers' }
   ];
 
   contactInfo = {
     address: 'Ground Floor, PVR Complex, community centre, Shop no , G-1, plot no 10, Block G, Vikaspuri, New Delhi, Delhi 110018',
-    phone: '+91 93182 52525',
-    email: 'info@mayarestaurant.com',
+    phone: '+918826823830',
+    email: 'mayasmateul@gmail.com',
     hours: {
-      weekdays: '11:00 AM - 10:00 PM',
-      weekends: '11:00 AM - 11:00 PM'
+      weekdays: '12:00 PM - 1:00 AM',
+      weekends: '12:00 PM - 1:00 AM'
     }
   };
 
@@ -44,25 +52,25 @@ export class FooterComponent {
     { 
       platform: 'Facebook', 
       icon: 'facebook-icon',
-      url: 'https://facebook.com/mayarestaurant',
+      url: 'https://www.facebook.com/profile.php?id=61585910821144',
       class: 'facebook'
     },
     { 
       platform: 'Instagram', 
       icon: 'instagram-icon',
-      url: 'https://instagram.com/mayarestaurant',
+      url: 'https://www.instagram.com/mayasmateul/',
       class: 'instagram'
     },
-    { 
-      platform: 'Twitter', 
-      icon: 'twitter-icon', 
-      url: 'https://twitter.com/mayarestaurant',
-      class: 'twitter'
-    },
+    // { 
+    //   platform: 'Twitter', 
+    //   icon: 'twitter-icon', 
+    //   url: 'https://twitter.com/mayarestaurant',
+    //   class: 'twitter'
+    // },
     { 
       platform: 'YouTube', 
       icon: 'youtube-icon',
-      url: 'https://youtube.com/mayarestaurant',
+      url: 'https://youtube.com/',
       class: 'youtube'
     }
   ];

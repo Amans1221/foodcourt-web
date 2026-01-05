@@ -11,16 +11,16 @@ import { RouterLink } from '@angular/router';
 })
 export class AboutComponent {
   restaurantInfo = {
-    name: 'MAYAS MATEUL Restaurant',
+    name: 'MAYA S MAT EUL Restaurant',
     tagline: 'Authentic Korean Cuisine Experience',
-    description: 'Since 2025, MAYA S MATEUL Restaurant has been serving authentic Korean dishes made with traditional recipes and the freshest ingredients. Our passion for Korean culinary heritage drives us to deliver an unforgettable dining experience.',
+    description: 'Since 2025, MAYA S MAT EUL Restaurant has been serving authentic Korean dishes made with traditional recipes and the freshest ingredients. Our passion for Korean culinary heritage drives us to deliver an unforgettable dining experience.',
     founded: '2025',
     address: 'Ground Floor, PVR Complex, community centre, Shop no , G-1, plot no 10, Block G, Vikaspuri, New Delhi, Delhi 110018',
-    phone: '+91 93182 52525',
-    email: 'info@mayarestaurant.com',
+    phone: '+918826823830',
+    email: 'mayasmateul@gmail.com',
     hours: {
-      weekdays: '11:00 AM - 10:00 PM',
-      weekends: '11:00 AM - 11:00 PM'
+      weekdays: '12:00 PM - 1:00 AM',
+      weekends: '12:00 PM - 1:00 AM'
     }
   };
 
@@ -53,18 +53,6 @@ export class AboutComponent {
       position: 'Owner',
       bio: 'With over 20 years of experience in Korean cuisine, Atul Dhull brings authentic flavors from Seoul to your table.',
       image: '/assets/file.jpg'
-    },
-    {
-      name: 'Lee Soo-yeon',
-      position: 'Sous Chef',
-      bio: 'Specializing in traditional banchan and fermentation techniques passed down through generations.',
-      image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=400&fit=crop&crop=face'
-    },
-    {
-      name: 'Park Ji-hoon',
-      position: 'Restaurant Manager',
-      bio: 'Dedicated to providing exceptional service and creating memorable dining experiences.',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face'
     }
   ];
 

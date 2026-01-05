@@ -13,22 +13,26 @@ import { RouterLink } from '@angular/router';
 export class ContactComponent {
   contactInfo = {
     address: 'Ground Floor, PVR Complex, community centre, Shop no , G-1, plot no 10, Block G, Vikaspuri, New Delhi, Delhi 110018',
-    phone: '+91 93182 52525',
-    email: 'info@mayarestaurant.com',
+    phone: '+918826823830',
+    email: 'mayasmateul@gmail.com',
     hours: {
-      weekdays: '11:00 AM - 10:00 PM',
-      weekends: '11:00 AM - 11:00 PM'
+      weekdays: '12:00 PM - 1:00 AM',
+      weekends: '12:00 PM - 1:00 AM'
     }
   };
 
-  contactForm = {
+  // Changed variable name to avoid conflict with template reference
+  contactFormData = {
     name: '',
     email: '',
     phone: '',
     subject: '',
     message: '',
-    preferredContact: 'email'
+    preferredContact: 'whatsapp'
   };
+
+  showSuccess = false;
+  showError = false;
 
   faqs = [
     {
@@ -60,18 +64,103 @@ export class ContactComponent {
   }
 
   onSubmit() {
-    // Handle form submission here
-    console.log('Form submitted:', this.contactForm);
-    alert('Thank you for your message! We will get back to you soon.');
+    // Hide any previous messages
+    this.showSuccess = false;
+    this.showError = false;
+
+    // Basic validation
+    if (!this.contactFormData.name || 
+        !this.contactFormData.phone || 
+        !this.contactFormData.subject || 
+        !this.contactFormData.message ||
+        !this.contactFormData.preferredContact) {
+      this.showError = true;
+      return;
+    }
+
+    // Send message based on preferred contact method
+    if (this.contactFormData.preferredContact === 'whatsapp') {
+      this.sendViaWhatsApp();
+    } else if (this.contactFormData.preferredContact === 'email') {
+      this.sendViaEmail();
+    } else {
+      // For phone call preference, we'll just show a success message
+      this.showSuccessMessage();
+    }
+  }
+
+  // Method to send via WhatsApp
+  sendViaWhatsApp() {
+    // Restaurant's WhatsApp number
+    const whatsappNumber = '918826823830';
+    
+    // Create the message
+    const message = `*New Message from MAYA'S MATEUL Website*%0A%0A` +
+                   `*Name:* ${this.contactFormData.name}%0A` +
+                   `*Phone:* ${this.contactFormData.phone}%0A` +
+                   (this.contactFormData.email ? `*Email:* ${this.contactFormData.email}%0A` : '') +
+                   `*Subject:* ${this.contactFormData.subject}%0A` +
+                   `*Message:*%0A${this.contactFormData.message}`;
+    
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+    
+    // Open WhatsApp in new tab
+    window.open(whatsappUrl, '_blank');
+    
+    // Show success message
+    this.showSuccessMessage();
     
     // Reset form
-    this.contactForm = {
+    this.resetForm();
+  }
+
+  // Method to send via Email
+  sendViaEmail() {
+    // Create email subject
+    const subject = `MAYA'S MATEUL Contact: ${this.contactFormData.subject}`;
+    
+    // Create email body
+    const body = `New Message from MAYA'S MATEUL Website%0A%0A` +
+                 `Name: ${this.contactFormData.name}%0A` +
+                 `Phone: ${this.contactFormData.phone}%0A` +
+                 (this.contactFormData.email ? `Email: ${this.contactFormData.email}%0A` : '') +
+                 `Subject: ${this.contactFormData.subject}%0A` +
+                 `Preferred Contact Method: Email%0A%0A` +
+                 `Message:%0A${this.contactFormData.message}`;
+    
+    // Create mailto URL
+    const mailtoUrl = `mailto:${this.contactInfo.email}?subject=${encodeURIComponent(subject)}&body=${body}`;
+    
+    // Open email client
+    window.location.href = mailtoUrl;
+    
+    // Show success message
+    this.showSuccessMessage();
+    
+    // Reset form
+    this.resetForm();
+  }
+
+  // Show success message
+  showSuccessMessage() {
+    this.showSuccess = true;
+    
+    // Hide success message after 5 seconds
+    setTimeout(() => {
+      this.showSuccess = false;
+    }, 5000);
+  }
+
+  // Reset form
+  resetForm() {
+    this.contactFormData = {
       name: '',
       email: '',
       phone: '',
       subject: '',
       message: '',
-      preferredContact: 'email'
+      preferredContact: 'whatsapp'
     };
   }
 }
