@@ -1,5 +1,5 @@
 // menu.component.ts
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
 import { MenuItem, Addon } from '../../models/menu-item.model';
@@ -12,8 +12,9 @@ import { MenuService } from '../../services/menu.service';
   templateUrl: './menu.html',
   styleUrls: ['./menu.css']
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit, AfterViewInit {
   @ViewChild('relatedRow') relatedRow!: ElementRef;
+  @ViewChild('categoryBar') categoryBar!: ElementRef;
 
   categories = [
     'Starters & Snacks',
@@ -39,11 +40,153 @@ export class MenuComponent {
   selectedSize: 'half' | 'full' = 'half';
   selectedAddon: Addon | null = null;
 
+  // Category scrolling properties
+  showCategoryScrollIndicators = false;
+  canScrollCategoryLeft = false;
+  canScrollCategoryRight = false;
+  isCategoryScrollable = false;
+  
+  // Mobile detection
+  isMobileView = false;
+
   // Toast notification properties
   showToast = false;
   toastMessage = '';
   toastItemName = '';
   toastItemPrice = 0;
+
+  // Touch/swipe properties
+  touchStartX = 0;
+  touchStartY = 0;
+  touchEndX = 0;
+  touchEndY = 0;
+  swipeThreshold = 30;
+
+  constructor(
+    private cartService: CartService,
+    private menuService: MenuService
+  ) {}
+
+  ngOnInit() {
+    this.menuService.getMenuItems().subscribe(items => {
+      this.menuItems = items;
+      if (items.length > 0) {
+        // Get unique categories from items
+        this.categories = Array.from(new Set(items.map(item => item.category)));
+        this.activeCategory = this.categories[0] || items[0].category;
+      }
+      this.selectedItemIndex = 0;
+      
+      // Check mobile view and scrollability after data loads
+      setTimeout(() => {
+        this.checkMobileView();
+        this.checkCategoryScrollability();
+      }, 100);
+    });
+  }
+
+  ngAfterViewInit() {
+    this.checkCategoryScrollability();
+    window.addEventListener('resize', () => {
+      this.checkMobileView();
+      this.checkCategoryScrollability();
+    });
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkMobileView();
+    this.checkCategoryScrollability();
+  }
+
+  checkMobileView() {
+    this.isMobileView = window.innerWidth <= 768;
+  }
+
+  checkCategoryScrollability() {
+    if (!this.categoryBar?.nativeElement) return;
+    
+    const element = this.categoryBar.nativeElement;
+    this.isCategoryScrollable = element.scrollWidth > element.clientWidth;
+    this.showCategoryScrollIndicators = this.isCategoryScrollable && this.isMobileView;
+    this.updateCategoryScrollButtons();
+  }
+
+  onCategoryScroll() {
+    this.updateCategoryScrollButtons();
+  }
+
+  updateCategoryScrollButtons() {
+    if (!this.categoryBar?.nativeElement) return;
+    
+    const element = this.categoryBar.nativeElement;
+    const scrollLeft = element.scrollLeft;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    
+    this.canScrollCategoryLeft = scrollLeft > 0;
+    this.canScrollCategoryRight = scrollLeft < maxScroll - 1;
+  }
+
+  scrollCategoryLeft() {
+    if (!this.categoryBar?.nativeElement || !this.canScrollCategoryLeft) return;
+    
+    const element = this.categoryBar.nativeElement;
+    const scrollAmount = Math.min(200, element.scrollLeft);
+    
+    element.scrollBy({
+      left: -scrollAmount,
+      behavior: 'smooth'
+    });
+    
+    setTimeout(() => this.updateCategoryScrollButtons(), 300);
+  }
+
+  scrollCategoryRight() {
+    if (!this.categoryBar?.nativeElement || !this.canScrollCategoryRight) return;
+    
+    const element = this.categoryBar.nativeElement;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    const scrollAmount = Math.min(200, maxScroll - element.scrollLeft);
+    
+    element.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+    
+    setTimeout(() => this.updateCategoryScrollButtons(), 300);
+  }
+
+  getCategoryIndex(): number {
+    return this.categories.indexOf(this.activeCategory);
+  }
+
+  // Touch swipe handlers for category bar
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].screenX;
+    this.touchStartY = event.changedTouches[0].screenY;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.touchEndY = event.changedTouches[0].screenY;
+    this.handleSwipeGesture();
+  }
+
+  handleSwipeGesture() {
+    const deltaX = this.touchEndX - this.touchStartX;
+    const deltaY = this.touchEndY - this.touchStartY;
+    
+    // Only consider horizontal swipes
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > this.swipeThreshold) {
+      if (deltaX > 0 && this.canScrollCategoryLeft) {
+        // Swipe right - scroll left
+        this.scrollCategoryLeft();
+      } else if (deltaX < 0 && this.canScrollCategoryRight) {
+        // Swipe left - scroll right
+        this.scrollCategoryRight();
+      }
+    }
+  }
 
   getSafeImage(item: MenuItem): string {
     return item.image || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop';
@@ -69,15 +212,31 @@ export class MenuComponent {
 
   setActiveCategory(category: string) {
     if (this.activeCategory === category) return;
+    
     this.activeCategory = category;
     this.selectedItemIndex = 0;
     this.selectedSize = 'half';
     this.selectedAddon = null;
     this.relatedScrollPosition = 0;
+    
+    // Scroll active category into view on mobile
     setTimeout(() => {
+      if (this.isMobileView && this.categoryBar?.nativeElement) {
+        const activeButton = this.categoryBar.nativeElement.querySelector('button.active');
+        if (activeButton) {
+          activeButton.scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+          });
+        }
+      }
+      
       if (this.relatedRow) {
         this.relatedRow.nativeElement.scrollLeft = 0;
       }
+      
+      this.updateCategoryScrollButtons();
     }, 100);
   }
 
@@ -217,22 +376,6 @@ export class MenuComponent {
     this.showToast = false;
   }
 
-  constructor(
-    private cartService: CartService,
-    private menuService: MenuService
-  ) {}
-
-  ngOnInit() {
-    this.menuService.getMenuItems().subscribe(items => {
-      this.menuItems = items;
-      if (items.length > 0) {
-        this.categories = Array.from(new Set(items.map(item => item.category)));
-        this.activeCategory = this.categories[0] || items[0].category;
-      }
-      this.selectedItemIndex = 0;
-    });
-  }
-
   addToCart(item: MenuItem) {
     const finalPrice = this.getFinalPrice(item);
     
@@ -243,7 +386,8 @@ export class MenuComponent {
       image: this.getSafeImage(item),
       quantity: 1,
       addon: this.selectedAddon?.name || null,
-      size: this.hasHalfFullPricing ? this.selectedSize : null
+      size: this.hasHalfFullPricing ? this.selectedSize : null,
+      category: item.category
     };
 
     this.cartService.addToCart(cartItem);

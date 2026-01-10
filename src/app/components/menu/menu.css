@@ -1,55 +1,106 @@
 /* === MAIN CONTAINER === */
 .menu-container {
   padding: 80px 20px 40px;
- padding: 6rem 2rem;
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/logo.jpeg);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    position: relative;
-    overflow: hidden;
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/logo.jpeg);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
   margin-top: 60px;
   min-height: calc(100vh - 60px);
   font-family: 'Poppins', sans-serif;
 }
 
-/* === CATEGORY BAR === */
-.category-bar {
-  text-align: center;
-  margin-bottom: 30px;
+/* === CATEGORY SECTION - IMPROVED FOR MOBILE === */
+.category-section {
   position: relative;
+  margin-bottom: 30px;
   padding: 0 10px;
 }
 
+/* Category header */
+.category-header {
+  display: none;
+}
+
+/* Category bar wrapper */
+.category-bar-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Category bar with scroll */
+.category-bar {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 15px 0 25px;
+  margin: 0 -10px;
+  padding-left: 10px;
+}
+
+.category-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Add gradient fade edges on mobile */
+.category-bar::before,
 .category-bar::after {
   content: '';
   position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #d50000, transparent);
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
 }
 
+.category-bar::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0));
+}
+
+.category-bar::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(248, 250, 252, 0.95), rgba(248, 250, 252, 0));
+}
+
+/* Hide fade edges when not needed */
+.category-bar.no-fade::before,
+.category-bar.no-fade::after {
+  opacity: 0;
+}
+
+/* Category buttons */
 .category-bar button {
+  flex: 0 0 auto;
   border: 2px solid #d50000;
   background: transparent;
   color: #d50000;
-  padding: 8px 18px;
-  margin: 6px 4px;
+  padding: 10px 20px;
+  margin-right: 12px;
   border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   z-index: 1;
-  font-size: 0.85rem;
-  min-width: fit-content;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
+.category-bar button:last-child {
+  margin-right: 0;
+}
+
+/* Button hover and active states */
 .category-bar button::before {
   content: '';
   position: absolute;
@@ -72,6 +123,104 @@
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(213, 0, 0, 0.2);
+}
+
+/* Category scroll indicators */
+.category-scroll-indicators {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.scroll-indicator {
+  pointer-events: auto;
+  background: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #d50000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.9;
+  z-index: 4;
+}
+
+.scroll-indicator:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 5px 15px rgba(213, 0, 0, 0.2);
+  background: linear-gradient(135deg, #fff5f5, #ffeaea);
+}
+
+.scroll-indicator.left {
+  left: -18px;
+}
+
+.scroll-indicator.right {
+  right: -18px;
+}
+
+.scroll-indicator:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+
+/* Mobile category info */
+.mobile-category-info {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  margin: 10px 0 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #d50000;
+}
+
+.mobile-category-info .current-category {
+  font-weight: 700;
+  color: #222;
+  font-size: 1.1rem;
+  position: relative;
+  padding-left: 8px;
+}
+
+.mobile-category-info .current-category::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(to bottom, #d50000, #ff6b6b);
+  border-radius: 2px;
+}
+
+.mobile-category-info .category-counter {
+  background: linear-gradient(135deg, #fff5f5, #ffeaea);
+  color: #d50000;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1.5px solid #ffcdd2;
 }
 
 /* === MAIN CONTENT LAYOUT === */
@@ -675,195 +824,6 @@
   box-shadow: 0 3px 8px rgba(213, 0, 0, 0.15);
 }
 
-/* === RESPONSIVE DESIGN === */
-@media (max-width: 1200px) {
-  .menu-content-wrapper {
-    gap: 30px;
-  }
-  
-  .menu-left-column {
-    min-width: 350px;
-  }
-  
-  .menu-right-column {
-    min-width: 450px;
-  }
-  
-  .related-card {
-    width: 160px;
-  }
-}
-
-@media (max-width: 992px) {
-  .menu-content-wrapper {
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  .menu-left-column {
-    position: relative;
-    top: 0;
-    min-width: 100%;
-  }
-  
-  .menu-right-column {
-    min-width: 100%;
-  }
-  
-  .menu-image img {
-    height: 350px;
-  }
-  
-  .related-row {
-    flex-wrap: wrap;
-    justify-content: center;
-    overflow-x: visible;
-    padding: 15px 0;
-  }
-  
-  .related-card {
-    flex: 0 0 calc(33.333% - 15px);
-    width: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .menu-container {
-    padding: 70px 15px 30px;
-    margin-top: 50px;
-  }
-  
-  .category-bar {
-    margin-bottom: 20px;
-  }
-  
-  .category-bar button {
-    padding: 6px 14px;
-    font-size: 0.8rem;
-    margin: 4px 3px;
-  }
-  
-  .menu-image img {
-    height: 300px;
-  }
-  
-  .related-section {
-    padding: 20px;
-  }
-  
-  .related-section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  
-  .related-section h4 {
-    font-size: 1.2rem;
-    width: 100%;
-  }
-  
-  .related-nav {
-    margin-left: 0;
-    align-self: flex-end;
-  }
-  
-  .related-card {
-    flex: 0 0 calc(50% - 15px);
-  }
-  
-  .related-card img {
-    height: 100px;
-  }
-  
-  .menu-text {
-    padding: 25px;
-  }
-  
-  .menu-text h2 {
-    font-size: 1.7rem;
-  }
-  
-  .menu-text .price {
-    font-size: 1.5rem;
-    padding: 12px 20px;
-  }
-  
-  .add-to-cart {
-    padding: 15px 30px;
-    font-size: 1.1rem;
-  }
-  
-  .size-toggle {
-    flex-direction: column;
-    padding: 15px;
-  }
-  
-  .size-toggle button {
-    padding: 12px 20px;
-    font-size: 1rem;
-  }
-  
-  .addons, .ingredients, .price-breakdown {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .menu-container {
-    padding: 60px 10px 20px;
-  }
-  
-  .category-bar {
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    justify-content: flex-start;
-    padding-bottom: 10px;
-  }
-  
-  .menu-image img {
-    height: 250px;
-  }
-  
-  .related-section h4 {
-    font-size: 1.1rem;
-  }
-  
-  .related-card {
-    flex: 0 0 100%;
-  }
-  
-  .menu-text h2 {
-    font-size: 1.5rem;
-  }
-  
-  .menu-text .price {
-    font-size: 1.3rem;
-    padding: 10px 16px;
-  }
-  
-  .add-to-cart {
-    padding: 12px 25px;
-    font-size: 1rem;
-  }
-  
-  .menu-navigation button {
-    width: 45px;
-    height: 45px;
-    margin: 0 15px;
-  }
-  
-  .related-nav button {
-    width: 35px;
-    height: 35px;
-    font-size: 0.8rem;
-  }
-}
-
-/* Smooth transitions for interactive elements */
-button, .addon-option, .size-toggle button, .related-card, .ingredient-tag {
-  transition: all 0.3s ease;
-}
 /* === TOAST NOTIFICATION === */
 .cart-toast {
   position: fixed;
@@ -992,31 +952,192 @@ button, .addon-option, .size-toggle button, .related-card, .ingredient-tag {
   width: 100%;
 }
 
-/* Toast animation */
-@keyframes slideInUp {
-  from {
-    transform: translateY(100px);
-    opacity: 0;
+/* === RESPONSIVE DESIGN === */
+/* Large Desktop */
+@media (min-width: 1400px) {
+  .category-bar {
+    justify-content: center;
+    overflow-x: visible;
+    flex-wrap: wrap;
+    padding-left: 0;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutDown {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(100px);
-    opacity: 0;
+  
+  .category-bar button {
+    margin: 5px 10px;
   }
 }
 
-/* Responsive toast */
+/* Desktop */
+@media (max-width: 1200px) {
+  .menu-content-wrapper {
+    gap: 30px;
+  }
+  
+  .menu-left-column {
+    min-width: 350px;
+  }
+  
+  .menu-right-column {
+    min-width: 450px;
+  }
+  
+  .related-card {
+    width: 160px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  .menu-content-wrapper {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .menu-left-column {
+    position: relative;
+    top: 0;
+    min-width: 100%;
+  }
+  
+  .menu-right-column {
+    min-width: 100%;
+  }
+  
+  .menu-image img {
+    height: 350px;
+  }
+  
+  .related-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
+    padding: 15px 0;
+  }
+  
+  .related-card {
+    flex: 0 0 calc(33.333% - 15px);
+    width: auto;
+  }
+  
+  /* Hide fade edges on tablet */
+  .category-bar::before,
+  .category-bar::after {
+    display: none;
+  }
+  
+  .category-scroll-indicators {
+    display: none !important;
+  }
+  
+  .mobile-category-info {
+    display: flex;
+  }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
+  .menu-container {
+    padding: 70px 15px 30px;
+    margin-top: 50px;
+  }
+  
+  /* Category styles for mobile */
+  .category-section {
+    margin-bottom: 20px;
+    padding: 0 5px;
+  }
+  
+  .category-bar {
+    padding: 10px 0 20px;
+    margin: 0 -5px;
+    padding-left: 5px;
+  }
+  
+  .category-bar button {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    margin-right: 8px;
+  }
+  
+  .category-scroll-indicators {
+    display: block;
+  }
+  
+  .mobile-category-info {
+    margin: 5px 0 15px;
+    padding: 10px 14px;
+  }
+  
+  .mobile-category-info .current-category {
+    font-size: 1rem;
+  }
+  
+  /* Rest of mobile styles */
+  .menu-image img {
+    height: 300px;
+  }
+  
+  .related-section {
+    padding: 20px;
+  }
+  
+  .related-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .related-section h4 {
+    font-size: 1.2rem;
+    width: 100%;
+  }
+  
+  .related-nav {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+  
+  .related-card {
+    flex: 0 0 calc(50% - 15px);
+  }
+  
+  .related-card img {
+    height: 100px;
+  }
+  
+  .menu-text {
+    padding: 25px;
+  }
+  
+  .menu-text h2 {
+    font-size: 1.7rem;
+  }
+  
+  .menu-text .price {
+    font-size: 1.5rem;
+    padding: 12px 20px;
+  }
+  
+  .add-to-cart {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+  }
+  
+  .size-toggle {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .size-toggle button {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  
+  .addons, .ingredients, .price-breakdown {
+    padding: 20px;
+  }
+  
+  /* Toast notification */
   .cart-toast {
     width: calc(100% - 40px);
     right: 20px;
@@ -1025,7 +1146,93 @@ button, .addon-option, .size-toggle button, .related-card, .ingredient-tag {
   }
 }
 
+/* Small Mobile */
 @media (max-width: 480px) {
+  .menu-container {
+    padding: 60px 10px 20px;
+  }
+  
+  .category-section {
+    padding: 0;
+  }
+  
+  .category-bar {
+    padding: 8px 0 18px;
+    margin: 0 -10px;
+    padding-left: 10px;
+  }
+  
+  .category-bar button {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+    margin-right: 6px;
+  }
+  
+  .scroll-indicator {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .scroll-indicator.left {
+    left: -16px;
+  }
+  
+  .scroll-indicator.right {
+    right: -16px;
+  }
+  
+  .mobile-category-info {
+    padding: 8px 12px;
+  }
+  
+  .mobile-category-info .current-category {
+    font-size: 0.95rem;
+  }
+  
+  .mobile-category-info .category-counter {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .menu-image img {
+    height: 250px;
+  }
+  
+  .related-section h4 {
+    font-size: 1.1rem;
+  }
+  
+  .related-card {
+    flex: 0 0 100%;
+  }
+  
+  .menu-text h2 {
+    font-size: 1.5rem;
+  }
+  
+  .menu-text .price {
+    font-size: 1.3rem;
+    padding: 10px 16px;
+  }
+  
+  .add-to-cart {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+  
+  .menu-navigation button {
+    width: 45px;
+    height: 45px;
+    margin: 0 15px;
+  }
+  
+  .related-nav button {
+    width: 35px;
+    height: 35px;
+    font-size: 0.8rem;
+  }
+  
   .cart-toast {
     width: calc(100% - 30px);
     right: 15px;
@@ -1051,4 +1258,33 @@ button, .addon-option, .size-toggle button, .related-card, .ingredient-tag {
     font-size: 1rem;
     padding: 3px 10px;
   }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  .category-bar button {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    margin-right: 5px;
+  }
+  
+  .scroll-indicator {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .mobile-category-info .current-category {
+    font-size: 0.9rem;
+  }
+  
+  .mobile-category-info .category-counter {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+button, .addon-option, .size-toggle button, .related-card, .ingredient-tag {
+  transition: all 0.3s ease;
 }

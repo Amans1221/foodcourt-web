@@ -1,14 +1,43 @@
 <!-- menu.html -->
 <div class="menu-container">
 
-  <!-- Category buttons -->
-  <div class="category-bar">
-    <button
-      *ngFor="let category of categories"
-      (click)="setActiveCategory(category)"
-      [class.active]="activeCategory === category">
-      {{ category }}
-    </button>
+  <!-- Mobile Category Info -->
+  <div class="mobile-category-info" *ngIf="isMobileView">
+    <div class="current-category">{{ activeCategory }}</div>
+    <div class="category-counter">
+      {{ getCategoryIndex() + 1 }}/{{ categories.length }}
+    </div>
+  </div>
+
+  <!-- Category bar with improved mobile support -->
+  <div class="category-section">
+    <div class="category-bar-wrapper">
+      <div class="category-bar" 
+           #categoryBar
+           [class.no-fade]="!showCategoryScrollIndicators"
+           (scroll)="onCategoryScroll()">
+        <button
+          *ngFor="let category of categories"
+          (click)="setActiveCategory(category)"
+          [class.active]="activeCategory === category">
+          {{ category }}
+        </button>
+      </div>
+      
+      <!-- Category scroll indicators for mobile -->
+      <div class="category-scroll-indicators" *ngIf="showCategoryScrollIndicators">
+        <button class="scroll-indicator left"
+                (click)="scrollCategoryLeft()"
+                [disabled]="!canScrollCategoryLeft">
+          ‹
+        </button>
+        <button class="scroll-indicator right"
+                (click)="scrollCategoryRight()"
+                [disabled]="!canScrollCategoryRight">
+          ›
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Main content -->
@@ -179,6 +208,7 @@
   </div>
 
 </div>
+
 <!-- Toast notification -->
 <div class="cart-toast" [class.show]="showToast" (click)="hideToast()">
   <div class="toast-content">
