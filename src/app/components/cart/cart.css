@@ -415,3 +415,268 @@
     border-top: 1px solid #eee;
   }
 }
+/* === MOBILE MENU ITEMS SCROLLER === */
+.mobile-menu-scroller {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(213, 0, 0, 0.25);
+  padding: 10px 20px;
+  z-index: 999;
+  animation: slideUpIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #ffcdd2;
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.mobile-menu-scroller.show {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mobile-scroll-indicator {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d50000, #ff5252);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(213, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.mobile-scroll-indicator:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(213, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ff1744, #ff6b6b);
+}
+
+.mobile-scroll-indicator:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mobile-scroll-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  max-width: 280px;
+  padding: 5px 10px;
+}
+
+.mobile-scroll-content::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-scroll-item {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  background: #fff5f5;
+  border-radius: 20px;
+  color: #d50000;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  text-align: center;
+  min-width: fit-content;
+}
+
+.mobile-scroll-item:hover {
+  background: #ffeaea;
+  transform: translateY(-2px);
+}
+
+.mobile-scroll-item.active {
+  background: linear-gradient(135deg, #d50000, #ff5252);
+  color: white;
+  border-color: #d50000;
+  box-shadow: 0 4px 12px rgba(213, 0, 0, 0.2);
+}
+
+.mobile-scroll-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 2px solid #ffcdd2;
+}
+
+.mobile-scroll-counter {
+  font-weight: 700;
+  color: #222;
+  font-size: 0.9rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Mobile only - show scroller */
+@media (max-width: 768px) {
+  .mobile-menu-scroller {
+    display: none; /* Hidden by default, shown via TypeScript */
+  }
+  
+  .mobile-menu-scroller.show {
+    display: flex;
+  }
+  
+  /* Adjust existing mobile navigation to accommodate scroller */
+  .menu-navigation {
+    margin-bottom: 80px; /* Add space for the mobile scroller */
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+  .mobile-menu-scroller {
+    padding: 8px 15px;
+    bottom: 15px;
+    gap: 15px;
+    max-width: 90vw;
+  }
+  
+  .mobile-scroll-content {
+    max-width: 200px;
+  }
+  
+  .mobile-scroll-item {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .mobile-scroll-indicator {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .mobile-scroll-counter {
+    font-size: 0.85rem;
+    min-width: 35px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .mobile-scroll-content {
+    max-width: 180px;
+  }
+  
+  .mobile-scroll-item {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+/* === HIDE EXISTING NAVIGATION ON MOBILE === */
+@media (max-width: 768px) {
+  .menu-navigation {
+    display: none; /* Hide main nav arrows on mobile */
+  }
+}
+
+/* === ADD SCROLL INDICATORS FOR MENU ITEMS === */
+.menu-item-scroll-hint {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #d50000, #ff5252);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(213, 0, 0, 0.2);
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-scroll-item:hover .menu-item-scroll-hint {
+  opacity: 1;
+}
+
+/* === PROGRESS INDICATOR FOR MOBILE SCROLLER === */
+.mobile-scroll-progress {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #ffebee;
+  border-radius: 2px 2px 0 0;
+  overflow: hidden;
+}
+
+.mobile-scroll-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #d50000, #ff6b6b);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* === TOUCH SCROLL INDICATORS FOR MOBILE === */
+.mobile-scroll-content::before,
+.mobile-scroll-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-scroll-content::before {
+  left: 0;
+  background: linear-gradient(to right, white, rgba(255, 255, 255, 0));
+}
+
+.mobile-scroll-content::after {
+  right: 0;
+  background: linear-gradient(to left, white, rgba(255, 255, 255, 0));
+}
+
+.mobile-scroll-content.scroll-start::before {
+  opacity: 0;
+}
+
+.mobile-scroll-content.scroll-end::after {
+  opacity: 0;
+}
+
+.mobile-scroll-content.scrolling::before,
+.mobile-scroll-content.scrolling::after {
+  opacity: 1;
+}
