@@ -15,7 +15,9 @@
       <div class="category-bar" 
            #categoryBar
            [class.no-fade]="!showCategoryScrollIndicators"
-           (scroll)="onCategoryScroll()">
+           (scroll)="onCategoryScroll()"
+           (touchstart)="onTouchStart($event)"
+           (touchend)="onTouchEnd($event)">
         <button
           *ngFor="let category of categories"
           (click)="setActiveCategory(category)"
@@ -50,17 +52,18 @@
         <img [src]="getSafeImage(selectedItem)" [alt]="selectedItem.name">
       </div>
 
-      <!-- Related dishes section with navigation arrows -->
+      <!-- Related dishes section -->
       <div class="related-section" *ngIf="filteredItems.length > 1">
         <div class="related-section-header">
           <h4>Other {{ activeCategory }} Dishes</h4>
-          <div class="related-nav">
+          <div class="related-nav" *ngIf="!isMobileView">
             <button (click)="scrollRelatedLeft()" [disabled]="relatedScrollPosition <= 0">❮</button>
             <button (click)="scrollRelatedRight()" [disabled]="isRelatedScrollAtEnd()">❯</button>
           </div>
         </div>
         
-        <div class="related-row" #relatedRow>
+        <!-- Desktop related row (hidden on mobile) -->
+        <div class="related-row" #relatedRow *ngIf="!isMobileView">
           <div
             class="related-card"
             *ngFor="let item of filteredItems; let i = index"
@@ -74,6 +77,62 @@
                 ₹{{ item.halfPrice }} / ₹{{ item.fullPrice }}
               </span>
             </small>
+          </div>
+        </div>
+
+        <!-- Mobile carousel (only visible on mobile) -->
+        <div class="mobile-related-carousel" *ngIf="isMobileView && filteredItems.length > 1">
+          <div class="carousel-autoplay-indicator" (click)="toggleCarouselAutoplay()" *ngIf="isCarouselAutoplayActive">
+            <div class="autoplay-dot"></div>
+            Auto
+          </div>
+          
+          <div class="carousel-container">
+            <div class="carousel-wrapper" 
+                 [style.transform]="'translateX(-' + (currentCarouselIndex * 100) + '%)'"
+                 (touchstart)="onCarouselTouchStart($event)"
+                 (touchend)="onCarouselTouchEnd($event)">
+              
+              <div class="carousel-slide" *ngFor="let item of filteredItems; let i = index">
+                <div class="carousel-card" (click)="selectItemFromCarousel(i)">
+                  <img [src]="getSafeImage(item)" [alt]="item.name">
+                  <div class="carousel-card-content">
+                    <h3 class="carousel-card-name">{{ item.name }}</h3>
+                    <p class="carousel-card-description">
+                      {{ (item.description || 'Delicious dish made with fresh ingredients').substring(0, 100) }}{{ (item.description && item.description.length > 100) ? '...' : '' }}
+                    </p>
+                    <div class="carousel-card-price">
+                      <span *ngIf="item.price">₹{{ item.price }}</span>
+                      <span *ngIf="!item.price">
+                        ₹{{ item.halfPrice }} / ₹{{ item.fullPrice }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Navigation arrows -->
+            <button class="carousel-arrow left" 
+                    (click)="prevCarouselSlide()"
+                    [disabled]="filteredItems.length <= 1">
+              ‹
+            </button>
+            <button class="carousel-arrow right" 
+                    (click)="nextCarouselSlide()"
+                    [disabled]="filteredItems.length <= 1">
+              ›
+            </button>
+          </div>
+          
+          <!-- Indicators -->
+          <div class="carousel-indicators">
+            <button *ngFor="let item of filteredItems; let i = index" 
+                    class="carousel-indicator" 
+                    [class.active]="i === currentCarouselIndex"
+                    (click)="goToCarouselSlide(i)"
+                    [attr.aria-label]="'Go to slide ' + (i + 1)">
+            </button>
           </div>
         </div>
       </div>

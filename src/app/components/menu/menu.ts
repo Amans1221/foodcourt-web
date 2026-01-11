@@ -1,5 +1,5 @@
 // menu.component.ts
-import { Component, ViewChild, ElementRef, HostListener, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
 import { MenuItem, Addon } from '../../models/menu-item.model';
@@ -12,7 +12,7 @@ import { MenuService } from '../../services/menu.service';
   templateUrl: './menu.html',
   styleUrls: ['./menu.css']
 })
-export class MenuComponent implements OnInit, AfterViewInit {
+export class MenuComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('relatedRow') relatedRow!: ElementRef;
   @ViewChild('categoryBar') categoryBar!: ElementRef;
 
@@ -55,12 +55,19 @@ export class MenuComponent implements OnInit, AfterViewInit {
   toastItemName = '';
   toastItemPrice = 0;
 
-  // Touch/swipe properties
+  // Touch/swipe properties for category
   touchStartX = 0;
   touchStartY = 0;
   touchEndX = 0;
   touchEndY = 0;
   swipeThreshold = 30;
+
+  // Carousel properties for mobile
+  currentCarouselIndex = 0;
+  carouselAutoplayInterval: any;
+  isCarouselAutoplayActive = true;
+  carouselTouchStartX = 0;
+  carouselTouchEndX = 0;
 
   constructor(
     private cartService: CartService,
@@ -76,11 +83,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
         this.activeCategory = this.categories[0] || items[0].category;
       }
       this.selectedItemIndex = 0;
+      this.currentCarouselIndex = 0;
       
       // Check mobile view and scrollability after data loads
       setTimeout(() => {
         this.checkMobileView();
         this.checkCategoryScrollability();
+        this.startCarouselAutoplay(); // Start autoplay when data loads
       }, 100);
     });
   }
@@ -88,6 +97,14 @@ export class MenuComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.checkCategoryScrollability();
     window.addEventListener('resize', () => {
+      this.checkMobileView();
+      this.checkCategoryScrollability();
+    });
+  }
+
+  ngOnDestroy() {
+    this.stopCarouselAutoplay();
+    window.removeEventListener('resize', () => {
       this.checkMobileView();
       this.checkCategoryScrollability();
     });
@@ -101,6 +118,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   checkMobileView() {
     this.isMobileView = window.innerWidth <= 768;
+    if (this.isMobileView) {
+      this.startCarouselAutoplay();
+    } else {
+      this.stopCarouselAutoplay();
+    }
   }
 
   checkCategoryScrollability() {
@@ -188,6 +210,101 @@ export class MenuComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Carousel Methods for Mobile
+  nextCarouselSlide() {
+    if (this.filteredItems.length === 0) return;
+    
+    this.currentCarouselIndex = (this.currentCarouselIndex + 1) % this.filteredItems.length;
+    this.resetCarouselAutoplay();
+  }
+
+  prevCarouselSlide() {
+    if (this.filteredItems.length === 0) return;
+    
+    this.currentCarouselIndex = (this.currentCarouselIndex - 1 + this.filteredItems.length) % this.filteredItems.length;
+    this.resetCarouselAutoplay();
+  }
+
+  goToCarouselSlide(index: number) {
+    if (index < 0 || index >= this.filteredItems.length) return;
+    
+    this.currentCarouselIndex = index;
+    this.resetCarouselAutoplay();
+  }
+
+  selectItemFromCarousel(index: number) {
+    if (index < 0 || index >= this.filteredItems.length) return;
+    
+    this.selectItemByIndex(index);
+    this.currentCarouselIndex = index;
+    this.resetCarouselAutoplay();
+  }
+
+  startCarouselAutoplay() {
+    if (!this.isMobileView || this.filteredItems.length <= 1 || !this.isCarouselAutoplayActive) return;
+    
+    this.stopCarouselAutoplay();
+    
+    this.carouselAutoplayInterval = setInterval(() => {
+      this.nextCarouselSlide();
+    }, 3000); // Change slide every 3 seconds
+  }
+
+  stopCarouselAutoplay() {
+    if (this.carouselAutoplayInterval) {
+      clearInterval(this.carouselAutoplayInterval);
+      this.carouselAutoplayInterval = null;
+    }
+  }
+
+  resetCarouselAutoplay() {
+    if (this.isCarouselAutoplayActive) {
+      this.stopCarouselAutoplay();
+      this.startCarouselAutoplay();
+    }
+  }
+
+  toggleCarouselAutoplay() {
+    this.isCarouselAutoplayActive = !this.isCarouselAutoplayActive;
+    
+    if (this.isCarouselAutoplayActive) {
+      this.startCarouselAutoplay();
+    } else {
+      this.stopCarouselAutoplay();
+    }
+  }
+
+  // Touch swipe for carousel
+  onCarouselTouchStart(event: TouchEvent) {
+    this.carouselTouchStartX = event.touches[0].clientX;
+    this.stopCarouselAutoplay();
+  }
+
+  onCarouselTouchEnd(event: TouchEvent) {
+    this.carouselTouchEndX = event.changedTouches[0].clientX;
+    this.handleCarouselSwipe();
+    
+    if (this.isCarouselAutoplayActive) {
+      setTimeout(() => this.startCarouselAutoplay(), 1000);
+    }
+  }
+
+  handleCarouselSwipe() {
+    const swipeThreshold = 50;
+    const deltaX = this.carouselTouchEndX - this.carouselTouchStartX;
+    
+    if (Math.abs(deltaX) > swipeThreshold) {
+      if (deltaX > 0) {
+        // Swipe right - go to previous slide
+        this.prevCarouselSlide();
+      } else {
+        // Swipe left - go to next slide
+        this.nextCarouselSlide();
+      }
+    }
+  }
+
+  // Original methods
   getSafeImage(item: MenuItem): string {
     return item.image || 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop';
   }
@@ -215,6 +332,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     
     this.activeCategory = category;
     this.selectedItemIndex = 0;
+    this.currentCarouselIndex = 0;
     this.selectedSize = 'half';
     this.selectedAddon = null;
     this.relatedScrollPosition = 0;
@@ -237,6 +355,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
       }
       
       this.updateCategoryScrollButtons();
+      this.resetCarouselAutoplay();
     }, 100);
   }
 
@@ -244,27 +363,33 @@ export class MenuComponent implements OnInit, AfterViewInit {
     if (index < 0 || index >= this.filteredItems.length) return;
     this.slideDirection = index > this.selectedItemIndex ? 'left' : 'right';
     this.selectedItemIndex = index;
+    this.currentCarouselIndex = index;
     this.selectedSize = 'half';
     this.selectedAddon = null;
     setTimeout(() => (this.slideDirection = null), 420);
+    this.resetCarouselAutoplay();
   }
 
   prevItem() {
     if (this.selectedItemIndex <= 0) return;
     this.slideDirection = 'right';
     this.selectedItemIndex--;
+    this.currentCarouselIndex = this.selectedItemIndex;
     this.selectedSize = 'half';
     this.selectedAddon = null;
     setTimeout(() => (this.slideDirection = null), 420);
+    this.resetCarouselAutoplay();
   }
 
   nextItem() {
     if (this.selectedItemIndex >= this.filteredItems.length - 1) return;
     this.slideDirection = 'left';
     this.selectedItemIndex++;
+    this.currentCarouselIndex = this.selectedItemIndex;
     this.selectedSize = 'half';
     this.selectedAddon = null;
     setTimeout(() => (this.slideDirection = null), 420);
+    this.resetCarouselAutoplay();
   }
 
   selectAddon(addon: Addon) {
