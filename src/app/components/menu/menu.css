@@ -464,14 +464,14 @@
   display: flex;
   transition: transform 0.4s ease-in-out;
   height: 100%;
-  min-height: 350px;
+  min-height: auto;
 }
 
 .carousel-slide {
   flex: 0 0 100%;
   width: 100%;
   height: 100%;
-  padding: 15px;
+  padding: 12px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -480,7 +480,7 @@
 /* Carousel card styling - COMPACT for mobile */
 .carousel-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -494,29 +494,29 @@
   transform: scale(0.98);
 }
 
-/* Don't crop the image - show full image */
+/* Image container - Fixed height */
 .carousel-image-container {
   width: 100%;
-  height: 180px;
+  height: 140px;
   background: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px;
-  border-bottom: 2px solid #ffebee;
+  padding: 10px;
+  border-bottom: 1px solid #ffebee;
 }
 
 .carousel-card img {
   width: auto;
   max-width: 100%;
   height: auto;
-  max-height: 160px;
+  max-height: 120px;
   object-fit: contain;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .carousel-card-content {
-  padding: 18px;
+  padding: 12px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -524,23 +524,23 @@
 }
 
 .carousel-card-name {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: #222;
-  margin-bottom: 8px;
-  line-height: 1.3;
+  margin-bottom: 6px;
+  line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.6em;
+  min-height: 2.4em;
 }
 
 .carousel-card-description {
   color: #666;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  margin-bottom: 12px;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  margin-bottom: 8px;
   flex-grow: 1;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -549,12 +549,12 @@
 }
 
 .carousel-card-price {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #d50000;
   background: #fff5f5;
-  padding: 8px 15px;
-  border-radius: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
   text-align: center;
   display: block;
   margin-top: auto;
@@ -566,19 +566,19 @@
   top: 50%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #d50000;
-  width: 36px;
-  height: 36px;
+  border: 1px solid #d50000;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #d50000;
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-arrow:hover {
@@ -588,11 +588,11 @@
 }
 
 .carousel-arrow.left {
-  left: 8px;
+  left: 6px;
 }
 
 .carousel-arrow.right {
-  right: 8px;
+  right: 6px;
 }
 
 .carousel-arrow:disabled {
@@ -611,14 +611,14 @@
 .carousel-indicators {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-top: 15px;
-  padding: 10px 0;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 8px 0;
 }
 
 .carousel-indicator {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #ffcdd2;
   border: none;
@@ -635,25 +635,25 @@
 /* Auto-play indicator */
 .carousel-autoplay-indicator {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 10px;
+  right: 10px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.65rem;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 0.6rem;
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   backdrop-filter: blur(5px);
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .autoplay-dot {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   background: #4CAF50;
   border-radius: 50%;
   animation: pulse 1.5s infinite;
@@ -667,167 +667,16 @@
 /* Current position indicator */
 .carousel-position-indicator {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 10px;
+  left: 10px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
   z-index: 2;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* === RESPONSIVE ADJUSTMENTS === */
-@media (max-width: 768px) {
-  .mobile-related-carousel {
-    display: block;
-  }
-  
-  .related-row {
-    display: none !important;
-  }
-  
-  .related-nav {
-    display: none !important;
-  }
-  
-  /* Adjust carousel for tablet */
-  .carousel-container {
-    min-height: 340px;
-  }
-  
-  .carousel-image-container {
-    height: 170px;
-  }
-  
-  .carousel-card img {
-    max-height: 150px;
-  }
-  
-  .carousel-card-content {
-    padding: 15px;
-  }
-  
-  .carousel-card-name {
-    font-size: 1rem;
-  }
-  
-  .carousel-card-description {
-    font-size: 0.82rem;
-  }
-  
-  .carousel-card-price {
-    font-size: 1rem;
-    padding: 7px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Mobile carousel adjustments */
-  .carousel-container {
-    min-height: 320px;
-  }
-  
-  .carousel-image-container {
-    height: 160px;
-    padding: 12px;
-  }
-  
-  .carousel-card img {
-    max-height: 140px;
-  }
-  
-  .carousel-card-content {
-    padding: 12px;
-  }
-  
-  .carousel-card-name {
-    font-size: 0.95rem;
-    min-height: 2.4em;
-  }
-  
-  .carousel-card-description {
-    font-size: 0.8rem;
-    -webkit-line-clamp: 2;
-  }
-  
-  .carousel-card-price {
-    font-size: 0.95rem;
-    padding: 6px 10px;
-  }
-  
-  .carousel-arrow {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-  }
-  
-  .carousel-arrow.left {
-    left: 6px;
-  }
-  
-  .carousel-arrow.right {
-    right: 6px;
-  }
-  
-  .carousel-indicators {
-    margin-top: 12px;
-  }
-  
-  .carousel-indicator {
-    width: 7px;
-    height: 7px;
-  }
-}
-
-@media (max-width: 360px) {
-  /* Extra small mobile adjustments */
-  .carousel-container {
-    min-height: 300px;
-  }
-  
-  .carousel-image-container {
-    height: 150px;
-    padding: 10px;
-  }
-  
-  .carousel-card img {
-    max-height: 130px;
-  }
-  
-  .carousel-card-name {
-    font-size: 0.9rem;
-    min-height: 2.2em;
-  }
-  
-  .carousel-card-description {
-    font-size: 0.78rem;
-    -webkit-line-clamp: 2;
-  }
-  
-  .carousel-card-price {
-    font-size: 0.9rem;
-    padding: 5px 8px;
-  }
-  
-  .carousel-arrow {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Hide carousel on desktop */
-@media (min-width: 769px) {
-  .mobile-related-carousel {
-    display: none;
-  }
-  
-  .related-row {
-    display: flex !important;
-  }
 }
 
 /* === MENU TEXT SECTION === */
@@ -1485,6 +1334,23 @@
     font-size: 1rem;
   }
   
+  /* Adjust carousel for tablet */
+  .carousel-image-container {
+    height: 130px;
+  }
+  
+  .carousel-card img {
+    max-height: 110px;
+  }
+  
+  .carousel-card-name {
+    font-size: 1rem;
+  }
+  
+  .carousel-card-price {
+    font-size: 0.95rem;
+  }
+  
   /* Rest of mobile styles */
   .menu-image img {
     height: 300px;
@@ -1492,6 +1358,7 @@
   
   .related-section {
     padding: 20px;
+    width: 360px;
   }
   
   .related-section-header {
@@ -1503,20 +1370,6 @@
   .related-section h4 {
     font-size: 1.2rem;
     width: 100%;
-  }
-  
-  .carousel-container {
-    height: 420px;
-  }
-  
-  .carousel-card img {
-    height: 220px;
-  }
-  
-  .carousel-arrow {
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
   }
   
   .menu-text {
@@ -1560,8 +1413,60 @@
   }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
+  /* Mobile carousel adjustments */
+  .carousel-image-container {
+    height: 120px;
+  }
+  
+  .carousel-card img {
+    max-height: 100px;
+  }
+  
+  .carousel-card-content {
+    padding: 10px;
+  }
+  
+  .carousel-card-name {
+    font-size: 0.9rem;
+    min-height: 2.2em;
+  }
+  
+  .carousel-card-description {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 2;
+  }
+  
+  .carousel-card-price {
+    font-size: 0.85rem;
+    padding: 5px 8px;
+  }
+  
+  .carousel-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .carousel-arrow.left {
+    left: 5px;
+    top: 70px;
+  }
+  
+  .carousel-arrow.right {
+    right: 5px;
+    top: 70px;
+  }
+  
+  .carousel-indicators {
+    margin-top: 8px;
+  }
+  
+  .carousel-indicator {
+    width: 5px;
+    height: 5px;
+  }
+  
   .menu-container {
     padding: 60px 10px 20px;
   }
@@ -1614,7 +1519,8 @@
   }
   
   .carousel-container {
-    height: 400px;
+    height: auto;
+    min-height: 320px;
   }
   
   .carousel-card img {
@@ -1691,8 +1597,37 @@
   }
 }
 
-/* Extra Small Mobile */
 @media (max-width: 360px) {
+  /* Extra small mobile adjustments */
+  .carousel-image-container {
+    height: 110px;
+  }
+  
+  .carousel-card img {
+    max-height: 90px;
+  }
+  
+  .carousel-card-name {
+    font-size: 0.85rem;
+    min-height: 2em;
+  }
+  
+  .carousel-card-description {
+    font-size: 0.7rem;
+    -webkit-line-clamp: 2;
+  }
+  
+  .carousel-card-price {
+    font-size: 0.8rem;
+    padding: 4px 6px;
+  }
+  
+  .carousel-arrow {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
+  }
+  
   .category-bar button {
     padding: 6px 12px;
     font-size: 0.75rem;
@@ -1715,15 +1650,22 @@
   }
   
   .carousel-container {
-    height: 380px;
+    min-height: 300px;
   }
   
   .carousel-card img {
     height: 180px;
   }
+}
+
+/* Hide carousel on desktop */
+@media (min-width: 769px) {
+  .mobile-related-carousel {
+    display: none;
+  }
   
-  .carousel-card-content {
-    padding: 15px;
+  .related-row {
+    display: flex !important;
   }
 }
 

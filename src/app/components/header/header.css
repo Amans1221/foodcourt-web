@@ -263,7 +263,7 @@
     top: 70px;
     left: -100%;
     width: 80%;
-    max-width: 300px;
+    max-width: 180px;
     height: calc(100vh - 70px);
     background: #d50000; /* Red background for mobile menu */
     flex-direction: column;
