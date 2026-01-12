@@ -6,9 +6,7 @@
   padding: 180px 20px;
   text-align: center;
   font-family: 'Poppins', sans-serif;
-  background: 
-    linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
-    url('/assets/logo.jpeg');
+  background: linear-gradient(135deg, #f8fafcb3, #f1f5f9e6), linear-gradient(135deg, rgba(220, 38, 38, .03) 0%, transparent 50%), url(/assets/Contact.webp);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -21,7 +19,7 @@
 .contact-hero {
   text-align: center;
   padding: 3rem 0;
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/logo.jpeg);
+    /* background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/Contact.webp); */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

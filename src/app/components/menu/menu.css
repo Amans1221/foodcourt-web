@@ -2,7 +2,7 @@
 .menu-container {
   padding: 80px 20px 40px;
   padding: 6rem 2rem;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/logo.jpeg);
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.7) 0%, rgba(241, 245, 249, 0.9) 100%), linear-gradient(135deg, rgba(220, 38, 38, 0.03) 0%, transparent 50%), url(/assets/cover.webp);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
